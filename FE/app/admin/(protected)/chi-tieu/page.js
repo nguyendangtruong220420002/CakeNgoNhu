@@ -3,11 +3,17 @@ import { getExpenseCategories, getExpenses } from '@/lib/adminApi';
 import ExpenseForm from '@/components/admin/ExpenseForm';
 import ExpenseTable from '@/components/admin/ExpenseTable';
 import ExpenseCategoryManager from '@/components/admin/ExpenseCategoryManager';
+import DateRangeFilter from '@/components/admin/DateRangeFilter';
 import BackLink from '@/components/admin/BackLink';
 
-export default async function AdminExpensePage() {
+export default async function AdminExpensePage({ searchParams }) {
   const admin = await getCurrentAdmin();
   const categories = await getExpenseCategories();
+
+  const params = await searchParams;
+  const isAll = params.all === '1' || (!params.from && !params.to);
+  const from = isAll ? undefined : params.from;
+  const to = isAll ? undefined : params.to;
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -19,17 +25,20 @@ export default async function AdminExpensePage() {
         {admin.role === 'owner' && <ExpenseCategoryManager categories={categories} />}
       </div>
 
-      {admin.role === 'owner' && <ExpenseTableSection />}
+      {admin.role === 'owner' && (
+        <ExpenseTableSection categories={categories} from={from} to={to} isAll={isAll} />
+      )}
     </div>
   );
 }
 
-async function ExpenseTableSection() {
-  const expenses = await getExpenses();
+async function ExpenseTableSection({ categories, from, to, isAll }) {
+  const expenses = await getExpenses({ from, to });
   return (
     <div>
       <h2 className="font-serif text-xl text-text mb-4">Lịch sử chi tiêu</h2>
-      <ExpenseTable expenses={expenses} />
+      <DateRangeFilter basePath="/admin/chi-tieu" from={from} to={to} isAll={isAll} />
+      <ExpenseTable expenses={expenses} categories={categories} />
     </div>
   );
 }
