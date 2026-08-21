@@ -13,10 +13,13 @@ function signToken(admin) {
 }
 
 function setAuthCookie(res, token) {
+  const isProd = process.env.NODE_ENV === 'production';
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    // FE (vercel.app) và BE nằm khác domain nên cookie phải là cross-site:
+    // 'none' bắt buộc đi kèm secure:true (browser chặn nếu không có https).
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
     maxAge: COOKIE_MAX_AGE,
   });
 }
@@ -55,7 +58,12 @@ const login = asyncHandler(async function (req, res) {
 });
 
 const logout = asyncHandler(async function (req, res) {
-  res.clearCookie(COOKIE_NAME);
+  const isProd = process.env.NODE_ENV === 'production';
+  res.clearCookie(COOKIE_NAME, {
+    httpOnly: true,
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
+  });
   res.status(204).send();
 });
 
