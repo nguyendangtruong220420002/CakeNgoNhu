@@ -1,9 +1,12 @@
 import Link from 'next/link';
+import { t } from '@/lib/i18n/getDictionary';
+import { pickLocalized } from '@/lib/i18n/localizedText';
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, locale }) {
   const startingPrice = product.sizes?.length
     ? Math.min(...product.sizes.map((s) => s.price))
     : null;
+  const name = pickLocalized(product.name, locale);
 
   return (
     <Link
@@ -15,13 +18,13 @@ export default function ProductCard({ product }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={product.images[0]}
-            alt={product.name}
+            alt={name}
             loading="lazy"
             className="w-full h-full object-cover"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-text/40 text-sm">
-            Chưa có ảnh
+            {t(locale, 'product.noImage')}
           </div>
         )}
         {product.tags?.length > 0 && (
@@ -31,10 +34,10 @@ export default function ProductCard({ product }) {
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-serif text-lg text-text mb-1">{product.name}</h3>
+        <h3 className="font-serif text-lg text-text mb-1">{name}</h3>
         {startingPrice !== null && (
           <p className="text-primary-dark font-medium">
-            Từ {startingPrice.toLocaleString('vi-VN')}đ
+            {t(locale, 'product.from')} {startingPrice.toLocaleString('vi-VN')}đ
           </p>
         )}
       </div>

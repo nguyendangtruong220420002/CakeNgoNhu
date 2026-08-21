@@ -14,6 +14,21 @@ Hệ thống gồm **3 phần chính**, dùng chung 1 cơ sở dữ liệu (data
 
 ---
 
+## 1.1 Thông tin thương hiệu & liên hệ
+
+| Thông tin | Nội dung |
+|---|---|
+| Tên tiệm | Ngô Như Cake Studio |
+| Hotline / Zalo | 0981 398 552 |
+| Địa chỉ | 158/1A Đường 22 Tháng 4, Phường An Phú, TP. Hồ Chí Minh |
+| Google Maps | https://maps.app.goo.gl/4GrYjvELXJRQT9sU7 |
+| Facebook | https://www.facebook.com/share/1HFgrNTTZU/?mibextid=wwXIfr |
+| Logo | File `logo.png` (hoặc `.svg`), đặt tại `FE/public/logo.png` |
+
+Các thông tin này hiển thị ở: **Header/Footer** (mọi trang), **nút Zalo/gọi ngay nổi (sticky)** trên mobile, **trang Liên hệ** (kèm bản đồ nhúng Google Maps), và **trang admin** (mục cài đặt cửa hàng) để dễ chỉnh sửa sau này thay vì hardcode cứng trong code.
+
+---
+
 ## 2. WEB KHÁCH HÀNG (Storefront)
 
 ### Chức năng chính
@@ -111,23 +126,23 @@ Lợi nhuận ngày = Tổng doanh thu ngày − Tổng chi tiêu ngày
 
 ---
 
-## 6. NHẬN DIỆN THƯƠNG HIỆU — TÔNG MÀU KEM
+## 6. NHẬN DIỆN THƯƠNG HIỆU — TÔNG KEM BE & ĐỎ MẬN
 
-Bảng màu chủ đạo cho toàn bộ hệ thống (web khách hàng + web quản lý):
+Cập nhật theo đúng bảng màu trong thiết kế menu thực tế của Ngô Như Cake Studio (kem be ấm + đỏ mận sang trọng, thay cho bản kem nhạt/caramel ban đầu):
 
 | Vai trò | Mã màu | Mô tả |
 |---|---|---|
-| Nền chính | `#FFF8EE` | Kem sữa nhạt |
-| Nhấn (nút, tiêu đề) | `#D8A25E` | Caramel / vàng bơ |
-| Nhấn đậm (hover, viền) | `#C89666` | Nâu kem đậm |
-| Chữ chính | `#4A3728` | Nâu socola đậm, dễ đọc |
-| Điểm nhấn phụ | `#F4C2C2` | Hồng pastel nhạt — dùng cho bánh sinh nhật/dịp lễ |
+| Nền chính | `#F3E4D3` | Kem be ấm |
+| Nhấn chính (badge, tiêu đề, nút) | `#7C2128` | Đỏ mận đậm — màu chủ đạo thương hiệu |
+| Nhấn đậm (hover, viền) | `#5E181E` | Đỏ mận tối hơn |
+| Chữ chính | `#4A2E1E` | Nâu socola đậm, dễ đọc |
+| Điểm nhấn phụ (viền, hoạ tiết) | `#C9A876` | Vàng đồng/gold nhạt |
 
 **Nguyên tắc dùng màu:**
-- Nền tổng thể luôn là kem nhạt `#FFF8EE`, không dùng trắng tinh để giữ cảm giác ấm áp
-- Nút hành động chính (Đặt bánh, Thanh toán) dùng màu caramel `#D8A25E`, chữ trắng
-- Chữ tiêu đề/nội dung dùng nâu socola `#4A3728` để tương phản tốt, dễ đọc
-- Hồng pastel `#F4C2C2` chỉ dùng làm điểm nhấn nhỏ (nhãn "Hot", banner dịp lễ), không dùng làm nền lớn
+- Nền tổng thể luôn là kem be `#F3E4D3`, không dùng trắng tinh để giữ cảm giác ấm áp, thủ công
+- Các khối tiêu đề lớn, badge số thứ tự, nút hành động chính (Đặt bánh, Thanh toán) dùng đỏ mận `#7C2128`, chữ trắng — tạo điểm nhấn sang trọng, nổi bật trên nền kem
+- Chữ tiêu đề/nội dung dùng nâu socola `#4A2E1E` để tương phản tốt, dễ đọc
+- Vàng đồng `#C9A876` dùng cho viền trang trí, icon, đường kẻ phân cách — không dùng làm nền lớn
 - Web quản lý (admin) có thể dùng tông màu này nhẹ nhàng hơn, ưu tiên độ tương phản cho bảng số liệu (doanh thu/chi tiêu) dễ đọc
 
 ---

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import MoneyInput from '@/components/MoneyInput';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -102,12 +103,10 @@ export default function ExpenseForm({ categories }) {
         <label className="block text-text font-medium mb-2" htmlFor="amount">
           Số tiền (đ)
         </label>
-        <input
+        <MoneyInput
           id="amount"
-          type="number"
-          min="0"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={setAmount}
           className="w-full rounded-xl border border-primary/40 bg-white px-4 py-2 text-text focus:outline-none focus:border-primary"
         />
       </div>

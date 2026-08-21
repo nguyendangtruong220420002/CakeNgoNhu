@@ -6,6 +6,12 @@ import { useRouter } from 'next/navigation';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+const SIZE_STATUS_LABELS = {
+  available: 'Có sẵn',
+  out_of_stock: 'Hết hàng',
+  pre_order: 'Đặt trước',
+};
+
 export default function ProductAdminTable({ products }) {
   const router = useRouter();
   const [pendingId, setPendingId] = useState(null);
@@ -26,7 +32,7 @@ export default function ProductAdminTable({ products }) {
   }
 
   async function handleDelete(product) {
-    if (!window.confirm(`Xoá mẫu bánh "${product.name}"? Không thể hoàn tác.`)) return;
+    if (!window.confirm(`Xoá mẫu bánh "${product.name?.vi}"? Không thể hoàn tác.`)) return;
 
     setPendingId(product._id);
     try {
@@ -49,6 +55,7 @@ export default function ProductAdminTable({ products }) {
       <table className="w-full bg-white/60 rounded-2xl overflow-hidden">
         <thead>
           <tr className="text-left text-text/70 text-sm border-b border-primary/20">
+            <th className="px-4 py-3">Ảnh</th>
             <th className="px-4 py-3">Tên</th>
             <th className="px-4 py-3">Danh mục</th>
             <th className="px-4 py-3">Size / Giá</th>
@@ -59,12 +66,30 @@ export default function ProductAdminTable({ products }) {
         <tbody>
           {products.map((product) => (
             <tr key={product._id} className="border-b border-primary/10 last:border-0">
-              <td className="px-4 py-3 font-medium text-text">{product.name}</td>
+              <td className="px-4 py-3">
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-accent/20 shrink-0">
+                  {product.images?.[0] && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={product.images[0]}
+                      alt=""
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+              </td>
+              <td className="px-4 py-3 font-medium text-text">{product.name?.vi}</td>
               <td className="px-4 py-3 text-text/70">{product.category}</td>
               <td className="px-4 py-3 text-text/70 text-sm">
                 {product.sizes?.length
                   ? product.sizes
-                      .map((s) => `${s.label}: ${s.price.toLocaleString('vi-VN')}đ`)
+                      .map(
+                        (s) =>
+                          `${s.label}: ${s.price.toLocaleString('vi-VN')}đ (${
+                            SIZE_STATUS_LABELS[s.status || 'available']
+                          })`
+                      )
                       .join(', ')
                   : '—'}
               </td>
@@ -84,6 +109,14 @@ export default function ProductAdminTable({ products }) {
               </td>
               <td className="px-4 py-3">
                 <div className="flex gap-3 text-sm">
+                  <Link
+                    href={`/san-pham/${product._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-text/70 hover:underline"
+                  >
+                    Xem
+                  </Link>
                   <Link href={`/admin/san-pham/${product._id}`} className="text-primary-dark hover:underline">
                     Sửa
                   </Link>

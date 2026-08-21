@@ -1,8 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { pickLocalized } from '@/lib/i18n/localizedText';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+const SIZE_STATUS_LABELS = {
+  out_of_stock: 'Hết hàng',
+  pre_order: 'Đặt trước',
+};
 
 function minDatetimeLocal() {
   const now = new Date();
@@ -10,13 +16,24 @@ function minDatetimeLocal() {
   return now.toISOString().slice(0, 16);
 }
 
-export default function OrderForm({ product, initialSizeLabel, initialQuantity }) {
+function firstAvailableIndex(sizes) {
+  const index = sizes.findIndex((s) => s.status !== 'out_of_stock');
+  return index >= 0 ? index : 0;
+}
+
+export default function OrderForm({ product, initialSizeLabel, initialQuantity, locale }) {
+  const productName = pickLocalized(product.name, locale);
   const hasSizes = product.sizes?.length > 0;
   const initialIndex = hasSizes
     ? product.sizes.findIndex((s) => s.label === initialSizeLabel)
     : -1;
+  const initialIsOutOfStock =
+    initialIndex >= 0 && product.sizes[initialIndex].status === 'out_of_stock';
 
-  const [sizeIdx, setSizeIdx] = useState(initialIndex >= 0 ? initialIndex : 0);
+  const [sizeIdx, setSizeIdx] = useState(() => {
+    if (initialIndex >= 0 && !initialIsOutOfStock) return initialIndex;
+    return hasSizes ? firstAvailableIndex(product.sizes) : 0;
+  });
   const [quantity, setQuantity] = useState(initialQuantity);
   const [note, setNote] = useState('');
   const [deliveryDate, setDeliveryDate] = useState('');
@@ -30,10 +47,16 @@ export default function OrderForm({ product, initialSizeLabel, initialQuantity }
   const [orderResult, setOrderResult] = useState(null);
 
   const selectedSize = hasSizes ? product.sizes[sizeIdx] : null;
+  const selectedOutOfStock = selectedSize?.status === 'out_of_stock';
   const totalAmount = selectedSize ? selectedSize.price * quantity : 0;
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (selectedOutOfStock) {
+      setError('Size này đã hết hàng, vui lòng chọn size khác');
+      return;
+    }
     setError('');
 
     if (!deliveryDate) {
@@ -114,24 +137,33 @@ export default function OrderForm({ product, initialSizeLabel, initialQuantity }
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="bg-white/60 rounded-2xl p-4">
-        <p className="font-serif text-lg text-text mb-3">{product.name}</p>
+        <p className="font-serif text-lg text-text mb-3">{productName}</p>
 
         <p className="text-text font-medium mb-2">Chọn size</p>
         <div className="flex flex-wrap gap-2 mb-4">
-          {product.sizes.map((size, index) => (
-            <button
-              key={size.label}
-              type="button"
-              onClick={() => setSizeIdx(index)}
-              className={`px-4 py-2 rounded-xl border text-sm transition-colors ${
-                index === sizeIdx
-                  ? 'bg-primary text-white border-primary'
-                  : 'border-primary/40 text-text hover:border-primary'
-              }`}
-            >
-              {size.label} — {size.price.toLocaleString('vi-VN')}đ
-            </button>
-          ))}
+          {product.sizes.map((size, index) => {
+            const outOfStock = size.status === 'out_of_stock';
+            return (
+              <button
+                key={size.label}
+                type="button"
+                disabled={outOfStock}
+                onClick={() => setSizeIdx(index)}
+                className={`px-4 py-2 rounded-xl border text-sm transition-colors ${
+                  outOfStock
+                    ? 'opacity-50 cursor-not-allowed border-text/20 text-text/40'
+                    : index === sizeIdx
+                      ? 'bg-primary text-white border-primary'
+                      : 'border-primary/40 text-text hover:border-primary'
+                }`}
+              >
+                {size.label} — {size.price.toLocaleString('vi-VN')}đ
+                {SIZE_STATUS_LABELS[size.status] && (
+                  <span className="ml-1">({SIZE_STATUS_LABELS[size.status]})</span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         <div className="flex items-center gap-4">
@@ -288,10 +320,14 @@ export default function OrderForm({ product, initialSizeLabel, initialQuantity }
 
       <button
         type="submit"
-        disabled={submitting}
+        disabled={submitting || selectedOutOfStock}
         className="w-full bg-primary hover:bg-primary-dark disabled:opacity-50 text-white px-6 py-3 rounded-xl transition-colors font-medium"
       >
-        {submitting ? 'Đang gửi...' : `Xác nhận đặt bánh — ${totalAmount.toLocaleString('vi-VN')}đ`}
+        {submitting
+          ? 'Đang gửi...'
+          : selectedOutOfStock
+            ? 'Size này đã hết hàng'
+            : `Xác nhận đặt bánh — ${totalAmount.toLocaleString('vi-VN')}đ`}
       </button>
     </form>
   );

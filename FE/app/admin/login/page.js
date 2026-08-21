@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -22,7 +23,7 @@ export default function AdminLoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier, password }),
       });
 
       const data = await res.json();
@@ -44,18 +45,18 @@ export default function AdminLoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white/60 rounded-2xl p-6">
-        <h1 className="font-serif text-2xl text-text text-center mb-6">Đăng nhập Admin</h1>
+        <h1 className="font-serif text-2xl text-text text-center mb-6">Đăng nhập</h1>
 
         <div className="mb-4">
-          <label className="block text-text font-medium mb-2" htmlFor="email">
-            Email
+          <label className="block text-text font-medium mb-2" htmlFor="identifier">
+            Tên đăng nhập
           </label>
           <input
-            id="email"
-            type="email"
+            id="identifier"
+            type="text"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             className="w-full rounded-xl border border-primary/40 bg-white px-4 py-3 text-text focus:outline-none focus:border-primary"
           />
         </div>
@@ -83,6 +84,13 @@ export default function AdminLoginPage() {
         >
           {submitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
         </button>
+
+        <Link
+          href="/"
+          className="block text-center text-sm text-text/60 hover:text-primary mt-4 transition-colors"
+        >
+          ← Về trang chủ
+        </Link>
       </form>
     </main>
   );

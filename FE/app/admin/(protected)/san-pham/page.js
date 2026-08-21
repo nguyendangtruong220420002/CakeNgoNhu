@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getCurrentAdmin } from '@/lib/auth';
 import { getAdminProducts } from '@/lib/adminApi';
 import ProductAdminTable from '@/components/admin/ProductAdminTable';
+import BackLink from '@/components/admin/BackLink';
 
 export default async function AdminProductListPage() {
   const admin = await getCurrentAdmin();
@@ -14,6 +15,7 @@ export default async function AdminProductListPage() {
 
   return (
     <div className="max-w-5xl mx-auto">
+      <BackLink href="/admin" />
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-serif text-2xl text-text">Quản lý mẫu bánh</h1>
         <Link

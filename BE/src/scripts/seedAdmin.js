@@ -4,11 +4,11 @@ const bcrypt = require('bcryptjs');
 const Admin = require('../models/Admin');
 
 async function main() {
-  const [name, email, password, role = 'owner'] = process.argv.slice(2);
+  const [name, username, password, role = 'owner', email, phone] = process.argv.slice(2);
 
-  if (!name || !email || !password) {
+  if (!name || !username || !password) {
     console.error(
-      'Cách dùng: npm run seed:admin -- "<Tên>" <email> <mật khẩu> [owner|employee]'
+      'Cách dùng: npm run seed:admin -- "<Tên>" <username> <mật khẩu> [owner|employee] [email] [số điện thoại]'
     );
     process.exit(1);
   }
@@ -20,9 +20,15 @@ async function main() {
 
   await mongoose.connect(process.env.MONGODB_URI);
 
-  const existing = await Admin.findOne({ email: email.toLowerCase().trim() });
+  const existing = await Admin.findOne({
+    $or: [
+      { username: username.toLowerCase().trim() },
+      ...(email ? [{ email: email.toLowerCase().trim() }] : []),
+      ...(phone ? [{ phone: phone.trim() }] : []),
+    ],
+  });
   if (existing) {
-    console.error(`Admin với email ${email} đã tồn tại`);
+    console.error('Admin với username/email/số điện thoại này đã tồn tại');
     await mongoose.disconnect();
     process.exit(1);
   }
@@ -30,12 +36,14 @@ async function main() {
   const passwordHash = await bcrypt.hash(password, 10);
   const admin = await Admin.create({
     name,
-    email: email.toLowerCase().trim(),
+    username: username.toLowerCase().trim(),
+    email: email ? email.toLowerCase().trim() : undefined,
+    phone: phone ? phone.trim() : undefined,
     passwordHash,
     role,
   });
 
-  console.log(`Đã tạo admin: ${admin.email} (${admin.role})`);
+  console.log(`Đã tạo admin: ${admin.username} (${admin.role})`);
   await mongoose.disconnect();
 }
 

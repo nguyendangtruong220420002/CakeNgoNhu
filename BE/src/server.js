@@ -5,11 +5,15 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const productRoutes = require('./routes/productRoutes');
+const productCategoryRoutes = require('./routes/productCategoryRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const authRoutes = require('./routes/authRoutes');
 const expenseCategoryRoutes = require('./routes/expenseCategoryRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const revenueRoutes = require('./routes/revenueRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
+const reportRoutes = require('./routes/reportRoutes');
+const customerRoutes = require('./routes/customerRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -23,11 +27,15 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/products', productRoutes);
+app.use('/api/product-categories', productCategoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/expense-categories', expenseCategoryRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/revenue', revenueRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/customers', customerRoutes);
 
 app.use(errorHandler);
 

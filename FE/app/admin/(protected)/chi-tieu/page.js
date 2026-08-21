@@ -3,6 +3,7 @@ import { getExpenseCategories, getExpenses } from '@/lib/adminApi';
 import ExpenseForm from '@/components/admin/ExpenseForm';
 import ExpenseTable from '@/components/admin/ExpenseTable';
 import ExpenseCategoryManager from '@/components/admin/ExpenseCategoryManager';
+import BackLink from '@/components/admin/BackLink';
 
 export default async function AdminExpensePage() {
   const admin = await getCurrentAdmin();
@@ -10,6 +11,7 @@ export default async function AdminExpensePage() {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <BackLink href="/admin" />
       <h1 className="font-serif text-2xl text-text mb-6">Chi tiêu</h1>
 
       <div className="grid md:grid-cols-2 gap-6 mb-8">

@@ -30,14 +30,59 @@ export async function getExpenseCategories() {
   return res.json();
 }
 
-export async function getExpenses() {
-  const res = await adminFetch('/api/expenses');
+export async function getExpenses({ from, to } = {}) {
+  const qs = new URLSearchParams();
+  if (from) qs.set('from', from);
+  if (to) qs.set('to', to);
+  const suffix = qs.toString() ? `?${qs.toString()}` : '';
+
+  const res = await adminFetch(`/api/expenses${suffix}`);
   if (!res.ok) return [];
   return res.json();
 }
 
-export async function getDailyRevenue() {
-  const res = await adminFetch('/api/revenue/daily');
+export async function getDailyRevenue({ from, to } = {}) {
+  const qs = new URLSearchParams();
+  if (from) qs.set('from', from);
+  if (to) qs.set('to', to);
+  const suffix = qs.toString() ? `?${qs.toString()}` : '';
+
+  const res = await adminFetch(`/api/revenue/daily${suffix}`);
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function getManualRevenueEntries({ from, to } = {}) {
+  const qs = new URLSearchParams();
+  if (from) qs.set('from', from);
+  if (to) qs.set('to', to);
+  const suffix = qs.toString() ? `?${qs.toString()}` : '';
+
+  const res = await adminFetch(`/api/revenue/manual${suffix}`);
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function getProductCategories() {
+  const res = await adminFetch('/api/product-categories');
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function getProfitReport({ from, to } = {}) {
+  const qs = new URLSearchParams();
+  if (from) qs.set('from', from);
+  if (to) qs.set('to', to);
+  const suffix = qs.toString() ? `?${qs.toString()}` : '';
+
+  const res = await adminFetch(`/api/reports/profit${suffix}`);
+  if (!res.ok) return { days: [], totals: { totalRevenue: 0, totalExpenses: 0, totalProfit: 0 } };
+  return res.json();
+}
+
+export async function getCustomers(q) {
+  const qs = q ? `?q=${encodeURIComponent(q)}` : '';
+  const res = await adminFetch(`/api/customers${qs}`);
   if (!res.ok) return [];
   return res.json();
 }

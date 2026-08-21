@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import MoneyInput from '@/components/MoneyInput';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -14,6 +15,7 @@ export default function RevenueManualForm() {
   const [date, setDate] = useState(todayDateInput());
   const [totalRevenue, setTotalRevenue] = useState('');
   const [orderCount, setOrderCount] = useState('');
+  const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -41,7 +43,7 @@ export default function RevenueManualForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ date, totalRevenue: revenueNum, orderCount: countNum }),
+        body: JSON.stringify({ date, totalRevenue: revenueNum, orderCount: countNum, note: note.trim() }),
       });
       const data = await res.json();
 
@@ -52,6 +54,7 @@ export default function RevenueManualForm() {
 
       setTotalRevenue('');
       setOrderCount('');
+      setNote('');
       setSuccess(true);
       router.refresh();
     } catch (err) {
@@ -82,12 +85,10 @@ export default function RevenueManualForm() {
         <label className="block text-text font-medium mb-2" htmlFor="revAmount">
           Doanh thu (đ)
         </label>
-        <input
+        <MoneyInput
           id="revAmount"
-          type="number"
-          min="0"
           value={totalRevenue}
-          onChange={(e) => setTotalRevenue(e.target.value)}
+          onChange={setTotalRevenue}
           className="w-full rounded-xl border border-primary/40 bg-white px-4 py-2 text-text focus:outline-none focus:border-primary"
         />
       </div>
@@ -102,6 +103,19 @@ export default function RevenueManualForm() {
           min="0"
           value={orderCount}
           onChange={(e) => setOrderCount(e.target.value)}
+          className="w-full rounded-xl border border-primary/40 bg-white px-4 py-2 text-text focus:outline-none focus:border-primary"
+        />
+      </div>
+
+      <div>
+        <label className="block text-text font-medium mb-2" htmlFor="revNote">
+          Ghi chú
+        </label>
+        <input
+          id="revNote"
+          type="text"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
           className="w-full rounded-xl border border-primary/40 bg-white px-4 py-2 text-text focus:outline-none focus:border-primary"
         />
       </div>

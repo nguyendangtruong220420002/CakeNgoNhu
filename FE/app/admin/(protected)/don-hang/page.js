@@ -1,6 +1,7 @@
 import { getCurrentAdmin } from '@/lib/auth';
 import { getAdminOrders } from '@/lib/adminApi';
 import OrderAdminTable from '@/components/admin/OrderAdminTable';
+import BackLink from '@/components/admin/BackLink';
 
 const STATUS_TABS = [
   { value: '', label: 'Tất cả' },
@@ -19,6 +20,7 @@ export default async function AdminOrderListPage({ searchParams }) {
 
   return (
     <div className="max-w-6xl mx-auto">
+      <BackLink href="/admin" />
       <h1 className="font-serif text-2xl text-text mb-6">Quản lý đơn hàng</h1>
 
       <div className="flex flex-wrap gap-2 mb-6">

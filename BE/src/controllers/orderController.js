@@ -55,6 +55,9 @@ const createOrder = asyncHandler(async function (req, res) {
   if (!size) {
     return res.status(400).json({ message: 'Size không hợp lệ' });
   }
+  if (size.status === 'out_of_stock') {
+    return res.status(400).json({ message: 'Size này hiện đã hết hàng' });
+  }
 
   const customer = await Customer.findOneAndUpdate(
     { phone: customerPhone },
@@ -86,6 +89,126 @@ const createOrder = asyncHandler(async function (req, res) {
   await customer.save();
 
   res.status(201).json(order);
+});
+
+const createManualOrder = asyncHandler(async function (req, res) {
+  const { customerPhone, customerName, quantity, price, date, note, countInRevenue } = req.body;
+
+  if (!customerPhone || !customerPhone.trim()) {
+    return res.status(400).json({ message: 'Vui lòng nhập số điện thoại khách hàng' });
+  }
+  if (!customerName || !customerName.trim()) {
+    return res.status(400).json({ message: 'Vui lòng nhập họ tên khách hàng' });
+  }
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    return res.status(400).json({ message: 'Số lượng không hợp lệ' });
+  }
+  const unitPrice = Number(price);
+  if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+    return res.status(400).json({ message: 'Giá không hợp lệ' });
+  }
+
+  const saleDate = date ? new Date(date) : new Date();
+  if (Number.isNaN(saleDate.getTime())) {
+    return res.status(400).json({ message: 'Ngày không hợp lệ' });
+  }
+
+  const customer = await Customer.findOneAndUpdate(
+    { phone: customerPhone.trim() },
+    { name: customerName.trim(), phone: customerPhone.trim() },
+    { new: true, upsert: true, setDefaultsOnInsert: true }
+  );
+
+  const totalAmount = unitPrice * quantity;
+
+  const order = await Order.create({
+    customerId: customer._id,
+    items: [
+      {
+        quantity,
+        note: note ? note.trim() : '',
+        price: unitPrice,
+      },
+    ],
+    deliveryDate: saleDate,
+    deliveryMethod: 'pickup',
+    status: 'completed',
+    totalAmount,
+    paymentMethod: 'cod',
+    paymentStatus: 'paid',
+    source: 'manual',
+    countInRevenue: Boolean(countInRevenue),
+    createdAt: saleDate,
+  });
+
+  customer.orderHistory.push(order._id);
+  await customer.save();
+
+  const populated = await order.populate({ path: 'customerId', select: 'name phone address' });
+
+  res.status(201).json(populated);
+});
+
+const updateManualOrder = asyncHandler(async function (req, res) {
+  const { id } = req.params;
+  const { quantity, price, note, date, countInRevenue } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'ID không hợp lệ' });
+  }
+
+  const order = await Order.findById(id);
+  if (!order) {
+    return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+  }
+  if (order.source !== 'manual') {
+    return res.status(400).json({ message: 'Chỉ có thể sửa đơn nhập tay tại quầy' });
+  }
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    return res.status(400).json({ message: 'Số lượng không hợp lệ' });
+  }
+  const unitPrice = Number(price);
+  if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+    return res.status(400).json({ message: 'Giá không hợp lệ' });
+  }
+  const saleDate = date ? new Date(date) : order.deliveryDate;
+  if (Number.isNaN(saleDate.getTime())) {
+    return res.status(400).json({ message: 'Ngày không hợp lệ' });
+  }
+
+  order.items = [
+    {
+      quantity,
+      note: note ? note.trim() : '',
+      price: unitPrice,
+    },
+  ];
+  order.totalAmount = unitPrice * quantity;
+  order.deliveryDate = saleDate;
+  order.countInRevenue = Boolean(countInRevenue);
+  order.createdAt = saleDate;
+
+  await order.save();
+  const populated = await order.populate({ path: 'customerId', select: 'name phone address' });
+
+  res.json(populated);
+});
+
+const deleteOrder = asyncHandler(async function (req, res) {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'ID không hợp lệ' });
+  }
+
+  const order = await Order.findByIdAndDelete(id);
+  if (!order) {
+    return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+  }
+
+  await Customer.updateOne({ _id: order.customerId }, { $pull: { orderHistory: order._id } });
+
+  res.status(204).send();
 });
 
 const ORDER_STATUSES = ['new', 'in_progress', 'completed', 'delivered', 'cancelled'];
@@ -128,4 +251,11 @@ const updateOrderStatus = asyncHandler(async function (req, res) {
   res.json(order);
 });
 
-module.exports = { createOrder, getOrders, updateOrderStatus };
+module.exports = {
+  createOrder,
+  createManualOrder,
+  updateManualOrder,
+  deleteOrder,
+  getOrders,
+  updateOrderStatus,
+};

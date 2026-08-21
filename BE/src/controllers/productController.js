@@ -35,6 +35,10 @@ const getProductById = asyncHandler(async function (req, res) {
 });
 
 const createProduct = asyncHandler(async function (req, res) {
+  if (!req.body.name?.vi?.trim()) {
+    return res.status(400).json({ message: 'Vui lòng nhập tên mẫu bánh (Tiếng Việt)' });
+  }
+
   const product = await Product.create(req.body);
   res.status(201).json(product);
 });
@@ -43,6 +47,9 @@ const updateProduct = asyncHandler(async function (req, res) {
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ message: 'ID không hợp lệ' });
+  }
+  if (req.body.name && !req.body.name.vi?.trim()) {
+    return res.status(400).json({ message: 'Vui lòng nhập tên mẫu bánh (Tiếng Việt)' });
   }
 
   const product = await Product.findByIdAndUpdate(id, req.body, {

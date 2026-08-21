@@ -10,7 +10,7 @@ async function protect(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const admin = await Admin.findById(decoded.id).select('name email role');
+    const admin = await Admin.findById(decoded.id).select('name username email phone role');
 
     if (!admin) {
       return res.status(401).json({ message: 'Tài khoản không tồn tại' });

@@ -15,7 +15,11 @@ const getExpenses = asyncHandler(async function (req, res) {
   if (from || to) {
     filter.date = {};
     if (from) filter.date.$gte = new Date(from);
-    if (to) filter.date.$lte = new Date(to);
+    if (to) {
+      const toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+      filter.date.$lte = toDate;
+    }
   }
 
   const expenses = await Expense.find(filter)
@@ -55,6 +59,41 @@ const createExpense = asyncHandler(async function (req, res) {
   res.status(201).json(populated);
 });
 
+const updateExpense = asyncHandler(async function (req, res) {
+  const { id } = req.params;
+  const { categoryId, date, amount, note } = req.body;
+
+  if (!isValidId(id)) {
+    return res.status(400).json({ message: 'ID không hợp lệ' });
+  }
+  if (!categoryId || !isValidId(categoryId)) {
+    return res.status(400).json({ message: 'Vui lòng chọn mục chi tiêu' });
+  }
+  if (!date || Number.isNaN(new Date(date).getTime())) {
+    return res.status(400).json({ message: 'Vui lòng chọn ngày chi' });
+  }
+  if (typeof amount !== 'number' || amount <= 0) {
+    return res.status(400).json({ message: 'Số tiền không hợp lệ' });
+  }
+
+  const category = await ExpenseCategory.findById(categoryId);
+  if (!category) {
+    return res.status(404).json({ message: 'Không tìm thấy mục chi tiêu' });
+  }
+
+  const expense = await Expense.findByIdAndUpdate(
+    id,
+    { categoryId, date, amount, note: note || '' },
+    { new: true, runValidators: true }
+  ).populate('categoryId', 'name');
+
+  if (!expense) {
+    return res.status(404).json({ message: 'Không tìm thấy khoản chi' });
+  }
+
+  res.json(expense);
+});
+
 const deleteExpense = asyncHandler(async function (req, res) {
   const { id } = req.params;
   if (!isValidId(id)) {
@@ -69,4 +108,4 @@ const deleteExpense = asyncHandler(async function (req, res) {
   res.status(204).send();
 });
 
-module.exports = { getExpenses, createExpense, deleteExpense };
+module.exports = { getExpenses, createExpense, updateExpense, deleteExpense };

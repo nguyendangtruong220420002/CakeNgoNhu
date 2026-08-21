@@ -66,13 +66,22 @@ export default function OrderAdminTable({ orders, canUpdateStatus }) {
           {orders.map((order) => (
             <tr key={order._id} className="border-b border-primary/10 last:border-0 align-top">
               <td className="px-4 py-3">
-                <p className="font-medium text-text">{order.customerId?.name || 'Khách vãng lai'}</p>
+                <div className="flex items-center gap-2">
+                  <p className="font-medium text-text">{order.customerId?.name || 'Khách vãng lai'}</p>
+                  {order.source === 'manual' && (
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-accent/40 text-text/70 shrink-0">
+                      Tại quầy
+                    </span>
+                  )}
+                </div>
                 <p className="text-text/60 text-sm">{order.customerId?.phone}</p>
               </td>
               <td className="px-4 py-3 text-text/70 text-sm">
                 {order.items.map((item, index) => (
                   <p key={index}>
-                    {item.productId?.name || 'Sản phẩm đã xoá'} ({item.sizeLabel}) x{item.quantity}
+                    {item.productId?.name?.vi ||
+                      (order.source === 'manual' ? 'Bán tại quầy' : 'Sản phẩm đã xoá')}
+                    {item.sizeLabel ? ` (${item.sizeLabel})` : ''} x{item.quantity}
                     {item.note && <span className="block text-text/50 italic">Ghi chú: {item.note}</span>}
                   </p>
                 ))}

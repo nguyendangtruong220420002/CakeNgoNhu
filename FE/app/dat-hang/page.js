@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import { getProductById } from '@/lib/api';
 import OrderForm from '@/components/OrderForm';
+import { getServerLocale } from '@/lib/i18n/serverLocale';
 
 export const metadata = {
-  title: 'Đặt bánh — CakeNgonNhu',
+  title: 'Đặt bánh — Ngô Như Cake Studio',
 };
 
 export default async function OrderPage({ searchParams }) {
@@ -25,7 +26,7 @@ export default async function OrderPage({ searchParams }) {
     );
   }
 
-  const product = await getProductById(productId);
+  const [product, locale] = await Promise.all([getProductById(productId), getServerLocale()]);
 
   if (!product) {
     notFound();
@@ -41,6 +42,7 @@ export default async function OrderPage({ searchParams }) {
         product={product}
         initialSizeLabel={params.size}
         initialQuantity={initialQuantity}
+        locale={locale}
       />
     </main>
   );

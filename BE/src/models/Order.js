@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const orderItemSchema = new mongoose.Schema(
   {
-    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-    sizeLabel: { type: String, required: true },
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    sizeLabel: { type: String, default: '' },
     quantity: { type: Number, required: true, min: 1 },
     note: { type: String, default: '' },
     price: { type: Number, required: true },
@@ -25,6 +25,8 @@ const orderSchema = new mongoose.Schema(
     totalAmount: { type: Number, required: true },
     paymentMethod: { type: String, enum: ['qr', 'cod', 'momo', 'zalopay'], required: true },
     paymentStatus: { type: String, enum: ['pending', 'paid'], default: 'pending' },
+    source: { type: String, enum: ['online', 'manual'], default: 'online' },
+    countInRevenue: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

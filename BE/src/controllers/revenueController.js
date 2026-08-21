@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const RevenueDaily = require('../models/RevenueDaily');
 const asyncHandler = require('../middleware/asyncHandler');
@@ -6,25 +7,30 @@ function toDateKey(date) {
   return new Date(date).toISOString().slice(0, 10);
 }
 
-function defaultRange() {
-  const to = new Date();
-  const from = new Date();
-  from.setDate(from.getDate() - 29);
-  return { from, to };
+function buildDateFilter(from, to) {
+  if (!from && !to) return null;
+  const filter = {};
+  if (from) filter.$gte = new Date(from);
+  if (to) {
+    const toDate = new Date(to);
+    toDate.setHours(23, 59, 59, 999);
+    filter.$lte = toDate;
+  }
+  return filter;
 }
 
 const getDailyRevenue = asyncHandler(async function (req, res) {
   const { from, to } = req.query;
-  const range = from && to ? { from: new Date(from), to: new Date(to) } : defaultRange();
+  const dateFilter = buildDateFilter(from, to);
 
-  const orders = await Order.find({
-    status: { $ne: 'cancelled' },
-    createdAt: { $gte: range.from, $lte: range.to },
-  }).select('totalAmount createdAt');
+  const orderFilter = { status: { $ne: 'cancelled' }, countInRevenue: true };
+  if (dateFilter) orderFilter.createdAt = dateFilter;
 
-  const manualEntries = await RevenueDaily.find({
-    date: { $gte: range.from, $lte: range.to },
-  });
+  const revenueFilter = {};
+  if (dateFilter) revenueFilter.date = dateFilter;
+
+  const orders = await Order.find(orderFilter).select('totalAmount createdAt');
+  const manualEntries = await RevenueDaily.find(revenueFilter);
 
   const byDate = {};
 
@@ -57,8 +63,19 @@ const getDailyRevenue = asyncHandler(async function (req, res) {
   res.json(result);
 });
 
+const getManualRevenueEntries = asyncHandler(async function (req, res) {
+  const { from, to } = req.query;
+  const dateFilter = buildDateFilter(from, to);
+
+  const filter = {};
+  if (dateFilter) filter.date = dateFilter;
+
+  const entries = await RevenueDaily.find(filter).sort({ date: -1 });
+  res.json(entries);
+});
+
 const createManualRevenue = asyncHandler(async function (req, res) {
-  const { date, totalRevenue, orderCount } = req.body;
+  const { date, totalRevenue, orderCount, note } = req.body;
 
   if (!date || Number.isNaN(new Date(date).getTime())) {
     return res.status(400).json({ message: 'Vui lòng chọn ngày' });
@@ -74,10 +91,62 @@ const createManualRevenue = asyncHandler(async function (req, res) {
     date,
     totalRevenue,
     orderCount,
+    note: note ? note.trim() : '',
     source: 'manual',
   });
 
   res.status(201).json(entry);
 });
 
-module.exports = { getDailyRevenue, createManualRevenue };
+const updateManualRevenue = asyncHandler(async function (req, res) {
+  const { id } = req.params;
+  const { date, totalRevenue, orderCount, note } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'ID không hợp lệ' });
+  }
+  if (!date || Number.isNaN(new Date(date).getTime())) {
+    return res.status(400).json({ message: 'Vui lòng chọn ngày' });
+  }
+  if (typeof totalRevenue !== 'number' || totalRevenue < 0) {
+    return res.status(400).json({ message: 'Doanh thu không hợp lệ' });
+  }
+  if (!Number.isInteger(orderCount) || orderCount < 0) {
+    return res.status(400).json({ message: 'Số đơn hàng không hợp lệ' });
+  }
+
+  const entry = await RevenueDaily.findByIdAndUpdate(
+    id,
+    { date, totalRevenue, orderCount, note: note ? note.trim() : '' },
+    { new: true, runValidators: true }
+  );
+
+  if (!entry) {
+    return res.status(404).json({ message: 'Không tìm thấy khoản doanh thu' });
+  }
+
+  res.json(entry);
+});
+
+const deleteManualRevenue = asyncHandler(async function (req, res) {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'ID không hợp lệ' });
+  }
+
+  const entry = await RevenueDaily.findByIdAndDelete(id);
+  if (!entry) {
+    return res.status(404).json({ message: 'Không tìm thấy khoản doanh thu' });
+  }
+
+  res.status(204).send();
+});
+
+module.exports = {
+  getDailyRevenue,
+  getManualRevenueEntries,
+  createManualRevenue,
+  updateManualRevenue,
+  deleteManualRevenue,
+};

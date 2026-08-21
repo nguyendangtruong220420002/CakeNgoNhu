@@ -24,3 +24,14 @@ export async function getProductById(id) {
     return null;
   }
 }
+
+export async function getShopSettings() {
+  try {
+    const res = await fetch(`${API_URL}/api/settings`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (err) {
+    console.error('Không thể tải thông tin cửa hàng:', err.message);
+    return null;
+  }
+}

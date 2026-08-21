@@ -31,6 +31,18 @@ export default async function AdminDashboardPage() {
               <p className="font-medium text-text mb-1">Doanh thu</p>
               <p className="text-text/60 text-sm">Doanh thu theo ngày (online + nhập tay)</p>
             </Link>
+            <Link href="/admin/loi-nhuan" className="bg-white/60 rounded-2xl p-4 hover:shadow-md transition-shadow">
+              <p className="font-medium text-text mb-1">Lợi nhuận</p>
+              <p className="text-text/60 text-sm">Doanh thu − chi tiêu, lọc theo ngày</p>
+            </Link>
+            <Link href="/admin/khach-hang" className="bg-white/60 rounded-2xl p-4 hover:shadow-md transition-shadow">
+              <p className="font-medium text-text mb-1">Khách hàng</p>
+              <p className="text-text/60 text-sm">Ghi nhận bán tại quầy, lịch sử mua hàng</p>
+            </Link>
+            <Link href="/admin/cai-dat" className="bg-white/60 rounded-2xl p-4 hover:shadow-md transition-shadow">
+              <p className="font-medium text-text mb-1">Cài đặt cửa hàng</p>
+              <p className="text-text/60 text-sm">Tên tiệm, hotline/Zalo, địa chỉ, Facebook</p>
+            </Link>
           </>
         )}
       </div>
