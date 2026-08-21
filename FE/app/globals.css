@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-background: #FFF8EE;   /* Nền chính — kem sữa nhạt */
+  --color-primary: #D8A25E;      /* Nút, tiêu đề, hành động chính — caramel/vàng bơ */
+  --color-primary-dark: #C89666; /* Hover, viền — nâu kem đậm */
+  --color-text: #4A3728;         /* Chữ chính — nâu socola đậm */
+  --color-accent: #F4C2C2;       /* Điểm nhấn phụ — hồng pastel */
+
+  --font-heading: Georgia, 'Times New Roman', serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
