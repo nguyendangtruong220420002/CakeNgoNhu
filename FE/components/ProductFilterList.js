@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import ProductCard from './ProductCard';
+import HorizontalScroller from './HorizontalScroller';
 import { t } from '@/lib/i18n/getDictionary';
 
 const PRICE_RANGES = [
@@ -40,11 +41,11 @@ export default function ProductFilterList({ products, locale }) {
     <div>
       <div className="mb-4">
         <p className="text-text font-medium mb-2">{t(locale, 'filter.categoryLabel')}</p>
-        <div className="flex flex-wrap gap-2">
+        <HorizontalScroller className="flex flex-nowrap gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
           <button
             type="button"
             onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-xl border text-sm transition-colors ${
+            className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-xl border text-sm transition-colors ${
               selectedCategory === null
                 ? 'bg-primary text-white border-primary'
                 : 'border-primary/40 text-text hover:border-primary'
@@ -57,7 +58,7 @@ export default function ProductFilterList({ products, locale }) {
               key={category}
               type="button"
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-xl border text-sm transition-colors ${
+              className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-xl border text-sm transition-colors ${
                 selectedCategory === category
                   ? 'bg-primary text-white border-primary'
                   : 'border-primary/40 text-text hover:border-primary'
@@ -66,7 +67,7 @@ export default function ProductFilterList({ products, locale }) {
               {category}
             </button>
           ))}
-        </div>
+        </HorizontalScroller>
       </div>
 
       <div className="mb-8">

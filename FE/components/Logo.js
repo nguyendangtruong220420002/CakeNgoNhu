@@ -1,21 +1,19 @@
+import Image from 'next/image';
+
+const ASPECT_RATIO = 259 / 75;
+
 export default function Logo({ size = 56, className = '' }) {
+  const height = size;
+  const width = Math.round(size * ASPECT_RATIO);
+
   return (
-    <div
-      style={{ width: size, height: size }}
-      className={`inline-flex flex-col items-center justify-center rounded-full border-2 border-primary bg-accent/20 shrink-0 ${className}`}
-    >
-      <span
-        className="font-serif font-bold text-primary leading-none text-center"
-        style={{ fontSize: size * 0.16 }}
-      >
-        NGÔ NHƯ
-      </span>
-      <span
-        className="text-primary-dark leading-none tracking-wider text-center mt-0.5"
-        style={{ fontSize: size * 0.09 }}
-      >
-        · CAKE STUDIO ·
-      </span>
-    </div>
+    <Image
+      src="/images/logo.png"
+      alt="Ngô Như Cake Studio"
+      width={width}
+      height={height}
+      priority
+      className={`object-contain shrink-0 ${className}`}
+    />
   );
 }

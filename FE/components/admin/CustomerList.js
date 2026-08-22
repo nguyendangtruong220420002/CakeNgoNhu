@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MoneyInput from '@/components/MoneyInput';
+import Pagination from './Pagination';
+import HorizontalScroller from '@/components/HorizontalScroller';
+import { useConfirm } from '@/components/ConfirmProvider';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
@@ -141,11 +144,13 @@ function OrderEditRow({ order, onCancel, onSaved }) {
 
 export default function CustomerList({ customers }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [editingOrderId, setEditingOrderId] = useState(null);
   const [pendingId, setPendingId] = useState(null);
 
   async function handleDelete(order) {
-    if (!window.confirm('Xoá đơn này? Không thể hoàn tác.')) return;
+    const ok = await confirm({ title: 'Xoá đơn hàng', message: 'Xoá đơn này? Không thể hoàn tác.' });
+    if (!ok) return;
 
     setPendingId(order._id);
     try {
@@ -159,13 +164,26 @@ export default function CustomerList({ customers }) {
     }
   }
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setPage(1);
+  }, [customers]);
+
+  const pagedCustomers = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    return customers.slice(startIndex, startIndex + pageSize);
+  }, [customers, page, pageSize]);
+
   if (customers.length === 0) {
     return <p className="text-text/60">Không tìm thấy khách hàng phù hợp.</p>;
   }
 
   return (
+    <div>
     <div className="space-y-4">
-      {customers.map((customer) => {
+      {pagedCustomers.map((customer) => {
         const orders = customer.orderHistory || [];
         const totalSpent = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
@@ -186,8 +204,8 @@ export default function CustomerList({ customers }) {
             </div>
 
             {orders.length > 0 && (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+              <HorizontalScroller className="overflow-x-auto">
+                <table className="w-full min-w-[560px] text-sm">
                   <thead>
                     <tr className="text-left text-text/60 border-b border-primary/10">
                       <th className="py-1 pr-3">Ngày</th>
@@ -222,11 +240,11 @@ export default function CustomerList({ customers }) {
                                 (order.source === 'manual' ? 'Bán tại quầy' : 'Đã xoá');
                               const size = item.sizeLabel ? ` (${item.sizeLabel})` : '';
                               return (
-                                <p key={index}>
+                                <p key={index} className="whitespace-nowrap">
                                   {label}
                                   {size} x{item.quantity}
                                   {item.note && (
-                                    <span className="block text-text/50 italic">{item.note}</span>
+                                    <span className="block text-text/50 italic whitespace-normal">{item.note}</span>
                                   )}
                                 </p>
                               );
@@ -275,11 +293,23 @@ export default function CustomerList({ customers }) {
                     )}
                   </tbody>
                 </table>
-              </div>
+              </HorizontalScroller>
             )}
           </div>
         );
       })}
+    </div>
+      <Pagination
+        total={customers.length}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(n) => {
+          setPageSize(n);
+          setPage(1);
+        }}
+        itemLabel="khách hàng"
+      />
     </div>
   );
 }

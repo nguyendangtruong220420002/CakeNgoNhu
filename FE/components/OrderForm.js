@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { pickLocalized } from '@/lib/i18n/localizedText';
+import { cloudinaryThumbUrl } from '@/lib/cloudinary';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -21,9 +22,11 @@ function firstAvailableIndex(sizes) {
   return index >= 0 ? index : 0;
 }
 
-export default function OrderForm({ product, initialSizeLabel, initialQuantity, locale }) {
+export default function OrderForm({ product, initialSizeLabel, initialQuantity, initialImage, locale }) {
   const productName = pickLocalized(product.name, locale);
   const hasSizes = product.sizes?.length > 0;
+  const selectedImage =
+    initialImage && product.images?.includes(initialImage) ? initialImage : product.images?.[0] || '';
   const initialIndex = hasSizes
     ? product.sizes.findIndex((s) => s.label === initialSizeLabel)
     : -1;
@@ -45,12 +48,13 @@ export default function OrderForm({ product, initialSizeLabel, initialQuantity, 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [orderResult, setOrderResult] = useState(null);
+  const [confirming, setConfirming] = useState(false);
 
   const selectedSize = hasSizes ? product.sizes[sizeIdx] : null;
   const selectedOutOfStock = selectedSize?.status === 'out_of_stock';
   const totalAmount = selectedSize ? selectedSize.price * quantity : 0;
 
-  async function handleSubmit(e) {
+  function handleReview(e) {
     e.preventDefault();
 
     if (selectedOutOfStock) {
@@ -72,6 +76,11 @@ export default function OrderForm({ product, initialSizeLabel, initialQuantity, 
       return;
     }
 
+    setConfirming(true);
+  }
+
+  async function handleConfirmOrder() {
+    setError('');
     setSubmitting(true);
     try {
       const res = await fetch(`${API_URL}/api/orders`, {
@@ -82,6 +91,7 @@ export default function OrderForm({ product, initialSizeLabel, initialQuantity, 
           sizeLabel: selectedSize.label,
           quantity,
           note,
+          image: selectedImage,
           deliveryDate: new Date(deliveryDate).toISOString(),
           deliveryMethod,
           address,
@@ -134,10 +144,132 @@ export default function OrderForm({ product, initialSizeLabel, initialQuantity, 
     );
   }
 
+  if (confirming) {
+    const deliveryDateLabel = deliveryDate
+      ? new Date(deliveryDate).toLocaleString('vi-VN', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : '';
+
+    return (
+      <div className="bg-white/60 rounded-2xl p-6 space-y-4">
+        <h2 className="font-serif text-xl text-text text-center mb-2">Xác nhận đơn hàng</h2>
+        <p className="text-text/60 text-sm text-center mb-4">
+          Vui lòng kiểm tra lại thông tin trước khi đặt bánh.
+        </p>
+
+        <div className="flex items-center gap-3 pb-2">
+          <div className="w-16 h-16 rounded-xl overflow-hidden bg-accent/20 shrink-0">
+            {selectedImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={cloudinaryThumbUrl(selectedImage, 128)}
+                alt={productName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-2xl">🎂</div>
+            )}
+          </div>
+          <div>
+            <p className="font-serif text-text">{productName}</p>
+            <p className="text-text/60 text-sm">Size {selectedSize.label}</p>
+          </div>
+        </div>
+
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between gap-4">
+            <span className="text-text/60">Số lượng</span>
+            <span className="text-text font-medium">{quantity}</span>
+          </div>
+          {note.trim() && (
+            <div className="flex justify-between gap-4">
+              <span className="text-text/60 shrink-0">Ghi chú</span>
+              <span className="text-text text-right">{note}</span>
+            </div>
+          )}
+          <div className="flex justify-between gap-4">
+            <span className="text-text/60">Ngày giờ nhận</span>
+            <span className="text-text font-medium">{deliveryDateLabel}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-text/60">Nhận bánh</span>
+            <span className="text-text font-medium">
+              {deliveryMethod === 'pickup' ? 'Tự lấy tại tiệm' : 'Giao tận nơi'}
+            </span>
+          </div>
+          {deliveryMethod === 'delivery' && (
+            <div className="flex justify-between gap-4">
+              <span className="text-text/60 shrink-0">Địa chỉ</span>
+              <span className="text-text text-right">{address}</span>
+            </div>
+          )}
+          <div className="flex justify-between gap-4">
+            <span className="text-text/60">Họ tên</span>
+            <span className="text-text font-medium">{customerName}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-text/60">Số điện thoại</span>
+            <span className="text-text font-medium">{customerPhone}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-text/60">Thanh toán</span>
+            <span className="text-text font-medium">
+              {paymentMethod === 'cod' ? 'Thanh toán khi nhận (COD)' : 'Chuyển khoản QR'}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4 pt-2 border-t border-primary/10">
+            <span className="text-text font-medium">Tổng tiền</span>
+            <span className="text-primary-dark font-semibold">{totalAmount.toLocaleString('vi-VN')}đ</span>
+          </div>
+        </div>
+
+        {error && <p className="text-red-600 text-sm">{error}</p>}
+
+        <div className="flex gap-3 pt-2">
+          <button
+            type="button"
+            onClick={() => setConfirming(false)}
+            disabled={submitting}
+            className="flex-1 border border-primary/40 text-text hover:border-primary disabled:opacity-50 px-4 py-3 rounded-xl transition-colors font-medium"
+          >
+            ← Chỉnh sửa lại
+          </button>
+          <button
+            type="button"
+            onClick={handleConfirmOrder}
+            disabled={submitting}
+            className="flex-1 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white px-4 py-3 rounded-xl transition-colors font-medium"
+          >
+            {submitting ? 'Đang gửi...' : 'Xác nhận đặt bánh'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleReview} className="space-y-6">
       <div className="bg-white/60 rounded-2xl p-4">
-        <p className="font-serif text-lg text-text mb-3">{productName}</p>
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-16 h-16 rounded-xl overflow-hidden bg-accent/20 shrink-0">
+            {selectedImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={cloudinaryThumbUrl(selectedImage, 128)}
+                alt={productName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-2xl">🎂</div>
+            )}
+          </div>
+          <p className="font-serif text-lg text-text">{productName}</p>
+        </div>
 
         <p className="text-text font-medium mb-2">Chọn size</p>
         <div className="flex flex-wrap gap-2 mb-4">
@@ -320,14 +452,12 @@ export default function OrderForm({ product, initialSizeLabel, initialQuantity, 
 
       <button
         type="submit"
-        disabled={submitting || selectedOutOfStock}
+        disabled={selectedOutOfStock}
         className="w-full bg-primary hover:bg-primary-dark disabled:opacity-50 text-white px-6 py-3 rounded-xl transition-colors font-medium"
       >
-        {submitting
-          ? 'Đang gửi...'
-          : selectedOutOfStock
-            ? 'Size này đã hết hàng'
-            : `Xác nhận đặt bánh — ${totalAmount.toLocaleString('vi-VN')}đ`}
+        {selectedOutOfStock
+          ? 'Size này đã hết hàng'
+          : `Xem lại đơn hàng — ${totalAmount.toLocaleString('vi-VN')}đ`}
       </button>
     </form>
   );

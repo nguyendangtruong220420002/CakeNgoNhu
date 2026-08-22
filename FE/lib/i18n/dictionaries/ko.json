@@ -1,5 +1,9 @@
 {
   "nav.login": "로그인",
+  "nav.home": "홈",
+  "nav.products": "케이크",
+  "nav.contact": "문의하기",
+  "nav.menu": "메뉴",
   "hero.badge": "수제 케이크 스튜디오",
   "hero.title": "특별한 순간을 위한 생크림 케이크 & 수제 케이크",
   "hero.categories": "생일 • 웨딩 • 무스 • 티라미수 • 소금 계란 카스테라 • 벤토 케이크 • 폰단",
@@ -18,6 +22,7 @@
   "filter.price300to500": "30만 - 50만동",
   "filter.priceOver500": "50만동 이상",
   "filter.empty": "일치하는 케이크가 없습니다.",
+  "detail.back": "뒤로 가기",
   "detail.chooseSize": "사이즈 선택",
   "detail.quantity": "수량",
   "detail.orderButton": "케이크 주문",

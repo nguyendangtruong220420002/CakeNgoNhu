@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { getProductById } from '@/lib/api';
-import ImageGallery from '@/components/ImageGallery';
-import ProductOrderPanel from '@/components/ProductOrderPanel';
+import ProductDetailView from '@/components/ProductDetailView';
 import { getServerLocale } from '@/lib/i18n/serverLocale';
 import { pickLocalized } from '@/lib/i18n/localizedText';
+import { t } from '@/lib/i18n/getDictionary';
 
 export default async function ProductDetailPage({ params }) {
   const { id } = await params;
@@ -18,25 +19,16 @@ export default async function ProductDetailPage({ params }) {
 
   return (
     <main className="min-h-screen px-4 py-8 md:py-12 max-w-5xl mx-auto pb-24 md:pb-12">
-      <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-        <ImageGallery images={product.images} alt={name} />
-
-        <div>
-          {product.tags?.length > 0 && (
-            <div className="flex gap-2 mb-3">
-              {product.tags.map((tag) => (
-                <span key={tag} className="bg-accent text-text text-xs px-2 py-1 rounded-full">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-          <h1 className="font-serif text-2xl md:text-3xl text-text mb-3">{name}</h1>
-          {description && <p className="text-text/70 mb-6 whitespace-pre-line">{description}</p>}
-
-          <ProductOrderPanel product={product} locale={locale} />
-        </div>
-      </div>
+      <Link
+        href="/san-pham"
+        className="inline-flex items-center gap-1 text-text/70 hover:text-primary transition-colors mb-4"
+      >
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        {t(locale, 'detail.back')}
+      </Link>
+      <ProductDetailView product={product} locale={locale} name={name} description={description} />
     </main>
   );
 }

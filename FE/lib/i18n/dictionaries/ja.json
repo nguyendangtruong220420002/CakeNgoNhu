@@ -1,5 +1,9 @@
 {
   "nav.login": "ログイン",
+  "nav.home": "ホーム",
+  "nav.products": "ケーキ",
+  "nav.contact": "お問い合わせ",
+  "nav.menu": "メニュー",
   "hero.badge": "手作りケーキ専門店",
   "hero.title": "特別な瞬間のための生クリームケーキ＆手作りケーキ",
   "hero.categories": "誕生日 • 結婚式 • ムース • ティラミス • 塩卵カステラ • 弁当ケーキ • フォンダン",
@@ -18,6 +22,7 @@
   "filter.price300to500": "30万〜50万ドン",
   "filter.priceOver500": "50万ドン以上",
   "filter.empty": "該当するケーキが見つかりません。",
+  "detail.back": "戻る",
   "detail.chooseSize": "サイズを選択",
   "detail.quantity": "数量",
   "detail.orderButton": "注文する",

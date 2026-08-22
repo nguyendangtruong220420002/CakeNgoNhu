@@ -4,7 +4,6 @@ import RevenueTable from '@/components/admin/RevenueTable';
 import RevenueManualForm from '@/components/admin/RevenueManualForm';
 import RevenueEntryList from '@/components/admin/RevenueEntryList';
 import DateRangeFilter from '@/components/admin/DateRangeFilter';
-import BackLink from '@/components/admin/BackLink';
 
 export default async function AdminRevenuePage({ searchParams }) {
   const admin = await getCurrentAdmin();
@@ -25,7 +24,6 @@ export default async function AdminRevenuePage({ searchParams }) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <BackLink href="/admin" />
       <h1 className="font-serif text-2xl text-text mb-6">Doanh thu theo ngày</h1>
 
       <div className="mb-8">

@@ -1,5 +1,9 @@
 {
   "nav.login": "Log in",
+  "nav.home": "Home",
+  "nav.products": "Cakes",
+  "nav.contact": "Contact",
+  "nav.menu": "Menu",
   "hero.badge": "Handcrafted Cake Studio",
   "hero.title": "Fresh cream cakes & handcrafted cakes for every special occasion",
   "hero.categories": "Birthday • Wedding • Mousse • Tiramisu • Salted Egg Sponge • Bento • Fondant",
@@ -18,6 +22,7 @@
   "filter.price300to500": "300k - 500k",
   "filter.priceOver500": "Over 500k",
   "filter.empty": "No matching cakes found.",
+  "detail.back": "Back",
   "detail.chooseSize": "Choose size",
   "detail.quantity": "Quantity",
   "detail.orderButton": "Order cake",

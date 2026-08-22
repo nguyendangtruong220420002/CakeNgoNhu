@@ -1,6 +1,8 @@
 'use client';
 
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
+import Pagination from './Pagination';
+import HorizontalScroller from '@/components/HorizontalScroller';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
@@ -88,14 +90,26 @@ function DayDetail({ date }) {
 
 export default function ProfitTable({ days, totals }) {
   const [expandedDate, setExpandedDate] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setPage(1);
+  }, [days]);
+
+  const pagedDays = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    return days.slice(startIndex, startIndex + pageSize);
+  }, [days, page, pageSize]);
 
   if (days.length === 0) {
     return <p className="text-text/60">Không có dữ liệu trong khoảng thời gian này.</p>;
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full bg-white/60 rounded-2xl overflow-hidden">
+    <div>
+    <HorizontalScroller className="overflow-x-auto">
+      <table className="w-full min-w-[600px] bg-white/60 rounded-2xl overflow-hidden">
         <thead>
           <tr className="text-left text-text/70 text-sm border-b border-primary/20">
             <th className="px-4 py-3">Ngày</th>
@@ -106,7 +120,7 @@ export default function ProfitTable({ days, totals }) {
           </tr>
         </thead>
         <tbody>
-          {days.map((day) => (
+          {pagedDays.map((day) => (
             <Fragment key={day.date}>
               <tr className="border-b border-primary/10 last:border-0">
                 <td className="px-4 py-3 text-text/70 text-sm whitespace-nowrap">
@@ -165,6 +179,18 @@ export default function ProfitTable({ days, totals }) {
           </tr>
         </tfoot>
       </table>
+    </HorizontalScroller>
+      <Pagination
+        total={days.length}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(n) => {
+          setPageSize(n);
+          setPage(1);
+        }}
+        itemLabel="ngày"
+      />
     </div>
   );
 }

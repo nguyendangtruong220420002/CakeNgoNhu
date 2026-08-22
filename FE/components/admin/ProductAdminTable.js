@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Pagination from './Pagination';
+import HorizontalScroller from '@/components/HorizontalScroller';
+import { cloudinaryThumbUrl } from '@/lib/cloudinary';
+import { useConfirm } from '@/components/ConfirmProvider';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
@@ -14,6 +18,7 @@ const SIZE_STATUS_LABELS = {
 
 export default function ProductAdminTable({ products }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [pendingId, setPendingId] = useState(null);
 
   async function handleToggleActive(product) {
@@ -32,7 +37,11 @@ export default function ProductAdminTable({ products }) {
   }
 
   async function handleDelete(product) {
-    if (!window.confirm(`Xoá mẫu bánh "${product.name?.vi}"? Không thể hoàn tác.`)) return;
+    const ok = await confirm({
+      title: 'Xoá mẫu bánh',
+      message: `Xoá mẫu bánh "${product.name?.vi}"? Không thể hoàn tác.`,
+    });
+    if (!ok) return;
 
     setPendingId(product._id);
     try {
@@ -46,13 +55,26 @@ export default function ProductAdminTable({ products }) {
     }
   }
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setPage(1);
+  }, [products]);
+
+  const pagedProducts = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    return products.slice(startIndex, startIndex + pageSize);
+  }, [products, page, pageSize]);
+
   if (products.length === 0) {
     return <p className="text-text/60">Chưa có mẫu bánh nào.</p>;
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full bg-white/60 rounded-2xl overflow-hidden">
+    <div>
+    <HorizontalScroller className="overflow-x-auto">
+      <table className="w-full min-w-[760px] bg-white/60 rounded-2xl overflow-hidden">
         <thead>
           <tr className="text-left text-text/70 text-sm border-b border-primary/20">
             <th className="px-4 py-3">Ảnh</th>
@@ -64,14 +86,14 @@ export default function ProductAdminTable({ products }) {
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
+          {pagedProducts.map((product) => (
             <tr key={product._id} className="border-b border-primary/10 last:border-0">
               <td className="px-4 py-3">
                 <div className="w-12 h-12 rounded-lg overflow-hidden bg-accent/20 shrink-0">
                   {product.images?.[0] && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={product.images[0]}
+                      src={cloudinaryThumbUrl(product.images[0], 96)}
                       alt=""
                       loading="lazy"
                       className="w-full h-full object-cover"
@@ -134,6 +156,18 @@ export default function ProductAdminTable({ products }) {
           ))}
         </tbody>
       </table>
+    </HorizontalScroller>
+      <Pagination
+        total={products.length}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(n) => {
+          setPageSize(n);
+          setPage(1);
+        }}
+        itemLabel="mẫu bánh"
+      />
     </div>
   );
 }

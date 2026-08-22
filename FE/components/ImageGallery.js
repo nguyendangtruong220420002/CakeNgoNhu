@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { cloudinaryThumbUrl } from '@/lib/cloudinary';
 
-export default function ImageGallery({ images, alt }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+export default function ImageGallery({ images, alt, activeIndex = 0, onChangeIndex }) {
   const hasImages = images && images.length > 0;
 
   return (
@@ -29,14 +28,14 @@ export default function ImageGallery({ images, alt }) {
             <button
               key={src + index}
               type="button"
-              onClick={() => setActiveIndex(index)}
+              onClick={() => onChangeIndex?.(index)}
               className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-colors ${
                 index === activeIndex ? 'border-primary' : 'border-transparent'
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={src}
+                src={cloudinaryThumbUrl(src, 96)}
                 alt=""
                 loading="lazy"
                 className="w-full h-full object-cover"

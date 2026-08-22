@@ -9,7 +9,7 @@ function firstAvailableIndex(sizes) {
   return index >= 0 ? index : 0;
 }
 
-export default function ProductOrderPanel({ product, locale }) {
+export default function ProductOrderPanel({ product, locale, selectedImage }) {
   const router = useRouter();
   const hasSizes = product.sizes?.length > 0;
   const [sizeIndex, setSizeIndex] = useState(() =>
@@ -31,6 +31,7 @@ export default function ProductOrderPanel({ product, locale }) {
       productId: product._id,
       size: selectedSize.label,
       qty: String(quantity),
+      ...(selectedImage ? { image: selectedImage } : {}),
     });
     router.push(`/dat-hang?${params.toString()}`);
   }

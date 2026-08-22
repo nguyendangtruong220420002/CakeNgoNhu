@@ -1,5 +1,9 @@
 {
   "nav.login": "登录",
+  "nav.home": "首页",
+  "nav.products": "蛋糕款式",
+  "nav.contact": "联系我们",
+  "nav.menu": "菜单",
   "hero.badge": "手工蛋糕工作室",
   "hero.title": "新鲜奶油蛋糕与手工蛋糕，适合每个特别的时刻",
   "hero.categories": "生日 • 婚礼 • 慕斯 • 提拉米苏 • 咸蛋黄海绵蛋糕 • 便当蛋糕 • 翻糖",
@@ -18,6 +22,7 @@
   "filter.price300to500": "30万 - 50万",
   "filter.priceOver500": "50万以上",
   "filter.empty": "未找到符合条件的蛋糕。",
+  "detail.back": "返回",
   "detail.chooseSize": "选择尺寸",
   "detail.quantity": "数量",
   "detail.orderButton": "立即订购",

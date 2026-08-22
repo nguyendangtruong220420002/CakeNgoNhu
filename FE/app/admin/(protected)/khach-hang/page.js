@@ -3,7 +3,6 @@ import { getCustomers } from '@/lib/adminApi';
 import ManualSaleForm from '@/components/admin/ManualSaleForm';
 import CustomerSearch from '@/components/admin/CustomerSearch';
 import CustomerList from '@/components/admin/CustomerList';
-import BackLink from '@/components/admin/BackLink';
 
 export default async function AdminCustomersPage({ searchParams }) {
   const admin = await getCurrentAdmin();
@@ -19,7 +18,6 @@ export default async function AdminCustomersPage({ searchParams }) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <BackLink href="/admin" />
       <h1 className="font-serif text-2xl text-text mb-6">Khách hàng</h1>
 
       <div className="mb-8">

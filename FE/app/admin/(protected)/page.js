@@ -6,10 +6,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="font-serif text-2xl text-text mb-2">Xin chào, {admin.name}</h1>
-      <p className="text-text/70 mb-6">
-        Vai trò: {admin.role === 'owner' ? 'Chủ tiệm (toàn quyền)' : 'Nhân viên'}
-      </p>
+      <h1 className="font-serif text-2xl text-text mb-6">Xin chào, {admin.name}</h1>
 
       <div className="grid sm:grid-cols-2 gap-4">
         <Link href="/admin/don-hang" className="bg-white/60 rounded-2xl p-4 hover:shadow-md transition-shadow">

@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MoneyInput from '@/components/MoneyInput';
+import Pagination from './Pagination';
+import HorizontalScroller from '@/components/HorizontalScroller';
+import { useConfirm } from '@/components/ConfirmProvider';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
@@ -118,11 +121,13 @@ function EditRow({ expense, categories, onCancel, onSaved }) {
 
 export default function ExpenseTable({ expenses, categories }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [pendingId, setPendingId] = useState(null);
 
   async function handleDelete(expense) {
-    if (!window.confirm('Xoá khoản chi này? Không thể hoàn tác.')) return;
+    const ok = await confirm({ title: 'Xoá khoản chi', message: 'Xoá khoản chi này? Không thể hoàn tác.' });
+    if (!ok) return;
 
     setPendingId(expense._id);
     try {
@@ -136,6 +141,18 @@ export default function ExpenseTable({ expenses, categories }) {
     }
   }
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setPage(1);
+  }, [expenses]);
+
+  const pagedExpenses = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    return expenses.slice(startIndex, startIndex + pageSize);
+  }, [expenses, page, pageSize]);
+
   if (expenses.length === 0) {
     return <p className="text-text/60">Chưa có khoản chi nào.</p>;
   }
@@ -143,8 +160,9 @@ export default function ExpenseTable({ expenses, categories }) {
   const total = expenses.reduce((sum, e) => sum + e.amount, 0);
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full bg-white/60 rounded-2xl overflow-hidden">
+    <div>
+    <HorizontalScroller className="overflow-x-auto">
+      <table className="w-full min-w-[720px] bg-white/60 rounded-2xl overflow-hidden">
         <thead>
           <tr className="text-left text-text/70 text-sm border-b border-primary/20">
             <th className="px-4 py-3">Ngày</th>
@@ -156,7 +174,7 @@ export default function ExpenseTable({ expenses, categories }) {
           </tr>
         </thead>
         <tbody>
-          {expenses.map((expense) =>
+          {pagedExpenses.map((expense) =>
             editingId === expense._id ? (
               <EditRow
                 key={expense._id}
@@ -212,6 +230,18 @@ export default function ExpenseTable({ expenses, categories }) {
           </tr>
         </tfoot>
       </table>
+    </HorizontalScroller>
+      <Pagination
+        total={expenses.length}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(n) => {
+          setPageSize(n);
+          setPage(1);
+        }}
+        itemLabel="khoản chi"
+      />
     </div>
   );
 }

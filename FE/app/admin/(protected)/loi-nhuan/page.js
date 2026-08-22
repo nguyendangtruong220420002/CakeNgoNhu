@@ -2,7 +2,6 @@ import { getCurrentAdmin } from '@/lib/auth';
 import { getProfitReport } from '@/lib/adminApi';
 import DateRangeFilter from '@/components/admin/DateRangeFilter';
 import ProfitTable from '@/components/admin/ProfitTable';
-import BackLink from '@/components/admin/BackLink';
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -24,7 +23,6 @@ export default async function AdminProfitPage({ searchParams }) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <BackLink href="/admin" />
       <h1 className="font-serif text-2xl text-text mb-6">Báo cáo lợi nhuận</h1>
       <DateRangeFilter basePath="/admin/loi-nhuan" from={from} to={to} isAll={isAll} />
       <ProfitTable days={report.days} totals={report.totals} />

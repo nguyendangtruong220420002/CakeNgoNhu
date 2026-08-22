@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useConfirm } from '@/components/ConfirmProvider';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
 export default function ExpenseCategoryManager({ categories }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -46,7 +48,11 @@ export default function ExpenseCategoryManager({ categories }) {
   }
 
   async function handleDelete(category) {
-    if (!window.confirm(`Xoá mục "${category.name}"?`)) return;
+    const ok = await confirm({
+      title: 'Xoá mục chi tiêu',
+      message: `Xoá mục "${category.name}"?`,
+    });
+    if (!ok) return;
 
     setPendingId(category._id);
     try {

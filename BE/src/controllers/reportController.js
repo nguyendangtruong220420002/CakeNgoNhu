@@ -2,6 +2,7 @@ const Order = require('../models/Order');
 const RevenueDaily = require('../models/RevenueDaily');
 const Expense = require('../models/Expense');
 const asyncHandler = require('../middleware/asyncHandler');
+const { REVENUE_STATUSES } = require('../constants/orderStatus');
 
 function toDateKey(date) {
   return new Date(date).toISOString().slice(0, 10);
@@ -19,7 +20,7 @@ const getProfitReport = asyncHandler(async function (req, res) {
   }
   const hasDateFilter = Boolean(from || to);
 
-  const orderFilter = { status: { $ne: 'cancelled' }, countInRevenue: true };
+  const orderFilter = { status: { $in: REVENUE_STATUSES }, countInRevenue: true };
   if (hasDateFilter) orderFilter.createdAt = dateFilter;
 
   const revenueFilter = {};
@@ -81,7 +82,7 @@ const getDayDetail = asyncHandler(async function (req, res) {
   const range = { $gte: dayStart, $lte: dayEnd };
 
   const [orders, manualRevenue, expenses] = await Promise.all([
-    Order.find({ status: { $ne: 'cancelled' }, countInRevenue: true, createdAt: range })
+    Order.find({ status: { $in: REVENUE_STATUSES }, countInRevenue: true, createdAt: range })
       .select('totalAmount source items createdAt')
       .populate('customerId', 'name phone'),
     RevenueDaily.find({ date: range }),

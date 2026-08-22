@@ -42,6 +42,7 @@ export default async function OrderPage({ searchParams }) {
         product={product}
         initialSizeLabel={params.size}
         initialQuantity={initialQuantity}
+        initialImage={params.image}
         locale={locale}
       />
     </main>

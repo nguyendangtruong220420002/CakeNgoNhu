@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const RevenueDaily = require('../models/RevenueDaily');
 const asyncHandler = require('../middleware/asyncHandler');
+const { REVENUE_STATUSES } = require('../constants/orderStatus');
 
 function toDateKey(date) {
   return new Date(date).toISOString().slice(0, 10);
@@ -23,7 +24,7 @@ const getDailyRevenue = asyncHandler(async function (req, res) {
   const { from, to } = req.query;
   const dateFilter = buildDateFilter(from, to);
 
-  const orderFilter = { status: { $ne: 'cancelled' }, countInRevenue: true };
+  const orderFilter = { status: { $in: REVENUE_STATUSES }, countInRevenue: true };
   if (dateFilter) orderFilter.createdAt = dateFilter;
 
   const revenueFilter = {};

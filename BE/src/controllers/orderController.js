@@ -3,6 +3,7 @@ const Order = require('../models/Order');
 const Customer = require('../models/Customer');
 const Product = require('../models/Product');
 const asyncHandler = require('../middleware/asyncHandler');
+const { ORDER_STATUSES } = require('../constants/orderStatus');
 
 const createOrder = asyncHandler(async function (req, res) {
   const {
@@ -10,6 +11,7 @@ const createOrder = asyncHandler(async function (req, res) {
     sizeLabel,
     quantity,
     note,
+    image,
     deliveryDate,
     deliveryMethod,
     address,
@@ -66,6 +68,7 @@ const createOrder = asyncHandler(async function (req, res) {
   );
 
   const totalAmount = size.price * quantity;
+  const selectedImage = image && product.images.includes(image) ? image : product.images[0] || '';
 
   const order = await Order.create({
     customerId: customer._id,
@@ -76,6 +79,7 @@ const createOrder = asyncHandler(async function (req, res) {
         quantity,
         note: note || '',
         price: size.price,
+        image: selectedImage,
       },
     ],
     deliveryDate,
@@ -161,9 +165,6 @@ const updateManualOrder = asyncHandler(async function (req, res) {
   if (!order) {
     return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
   }
-  if (order.source !== 'manual') {
-    return res.status(400).json({ message: 'Chỉ có thể sửa đơn nhập tay tại quầy' });
-  }
   if (!Number.isInteger(quantity) || quantity < 1) {
     return res.status(400).json({ message: 'Số lượng không hợp lệ' });
   }
@@ -176,8 +177,13 @@ const updateManualOrder = asyncHandler(async function (req, res) {
     return res.status(400).json({ message: 'Ngày không hợp lệ' });
   }
 
+  // Giữ nguyên productId/sizeLabel/image của item gốc — chỉ cho sửa số lượng, giá, ghi chú
+  const existingItem = order.items[0] || {};
   order.items = [
     {
+      productId: existingItem.productId,
+      sizeLabel: existingItem.sizeLabel || '',
+      image: existingItem.image || '',
       quantity,
       note: note ? note.trim() : '',
       price: unitPrice,
@@ -186,10 +192,16 @@ const updateManualOrder = asyncHandler(async function (req, res) {
   order.totalAmount = unitPrice * quantity;
   order.deliveryDate = saleDate;
   order.countInRevenue = Boolean(countInRevenue);
-  order.createdAt = saleDate;
+  if (order.source === 'manual') {
+    // Đơn tại quầy: ngày bán chính là ngày tạo đơn, dùng để gộp doanh thu theo ngày
+    order.createdAt = saleDate;
+  }
 
   await order.save();
-  const populated = await order.populate({ path: 'customerId', select: 'name phone address' });
+  const populated = await order.populate([
+    { path: 'customerId', select: 'name phone address' },
+    { path: 'items.productId', select: 'name images' },
+  ]);
 
   res.json(populated);
 });
@@ -211,8 +223,6 @@ const deleteOrder = asyncHandler(async function (req, res) {
   res.status(204).send();
 });
 
-const ORDER_STATUSES = ['new', 'in_progress', 'completed', 'delivered', 'cancelled'];
-
 const getOrders = asyncHandler(async function (req, res) {
   const { status } = req.query;
   const filter = status ? { status } : {};
@@ -220,7 +230,7 @@ const getOrders = asyncHandler(async function (req, res) {
   const orders = await Order.find(filter)
     .sort({ createdAt: -1 })
     .populate('customerId', 'name phone address')
-    .populate('items.productId', 'name');
+    .populate('items.productId', 'name images');
 
   res.json(orders);
 });
@@ -242,7 +252,7 @@ const updateOrderStatus = asyncHandler(async function (req, res) {
     { new: true, runValidators: true }
   )
     .populate('customerId', 'name phone address')
-    .populate('items.productId', 'name');
+    .populate('items.productId', 'name images');
 
   if (!order) {
     return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });

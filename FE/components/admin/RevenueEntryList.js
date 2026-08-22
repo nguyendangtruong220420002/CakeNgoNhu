@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MoneyInput from '@/components/MoneyInput';
+import Pagination from './Pagination';
+import HorizontalScroller from '@/components/HorizontalScroller';
+import { useConfirm } from '@/components/ConfirmProvider';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
@@ -119,11 +122,13 @@ function EditRow({ entry, onCancel, onSaved }) {
 
 export default function RevenueEntryList({ entries }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [pendingId, setPendingId] = useState(null);
 
   async function handleDelete(entry) {
-    if (!window.confirm('Xoá khoản doanh thu này? Không thể hoàn tác.')) return;
+    const ok = await confirm({ title: 'Xoá khoản doanh thu', message: 'Xoá khoản doanh thu này? Không thể hoàn tác.' });
+    if (!ok) return;
 
     setPendingId(entry._id);
     try {
@@ -137,13 +142,26 @@ export default function RevenueEntryList({ entries }) {
     }
   }
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setPage(1);
+  }, [entries]);
+
+  const pagedEntries = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    return entries.slice(startIndex, startIndex + pageSize);
+  }, [entries, page, pageSize]);
+
   if (entries.length === 0) {
     return <p className="text-text/60">Chưa có khoản doanh thu nhập tay nào.</p>;
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full bg-white/60 rounded-2xl overflow-hidden">
+    <div>
+    <HorizontalScroller className="overflow-x-auto">
+      <table className="w-full min-w-[560px] bg-white/60 rounded-2xl overflow-hidden">
         <thead>
           <tr className="text-left text-text/70 text-sm border-b border-primary/20">
             <th className="px-4 py-3">Ngày</th>
@@ -154,7 +172,7 @@ export default function RevenueEntryList({ entries }) {
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) =>
+          {pagedEntries.map((entry) =>
             editingId === entry._id ? (
               <EditRow
                 key={entry._id}
@@ -199,6 +217,18 @@ export default function RevenueEntryList({ entries }) {
           )}
         </tbody>
       </table>
+    </HorizontalScroller>
+      <Pagination
+        total={entries.length}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(n) => {
+          setPageSize(n);
+          setPage(1);
+        }}
+        itemLabel="khoản"
+      />
     </div>
   );
 }

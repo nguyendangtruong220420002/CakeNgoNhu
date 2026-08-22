@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useConfirm } from '@/components/ConfirmProvider';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
 export default function ProductCategoryPicker({ categories, value, onChange }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -49,7 +51,11 @@ export default function ProductCategoryPicker({ categories, value, onChange }) {
   }
 
   async function handleDelete(category) {
-    if (!window.confirm(`Xoá loại bánh "${category.name}"?`)) return;
+    const ok = await confirm({
+      title: 'Xoá loại bánh',
+      message: `Xoá loại bánh "${category.name}"?`,
+    });
+    if (!ok) return;
 
     setPendingId(category._id);
     try {
