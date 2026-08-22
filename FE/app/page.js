@@ -9,7 +9,7 @@ export default async function HomePage() {
   const featured = products.slice(0, 8);
 
   return (
-    <main className="min-h-screen pb-24 md:pb-0">
+    <main className="min-h-screen">
       <Hero locale={locale} />
 
       <section className="px-4 pb-16 max-w-6xl mx-auto">

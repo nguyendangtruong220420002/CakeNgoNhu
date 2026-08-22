@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import LanguageSwitcher from './LanguageSwitcher';
+import CartIcon from './CartIcon';
 import { t } from '@/lib/i18n/getDictionary';
 
 const NAV_LINKS = [
@@ -29,6 +30,7 @@ export default function HeaderNav({ locale }) {
       </nav>
 
       <div className="hidden md:flex items-center gap-2">
+        <CartIcon locale={locale} />
         <LanguageSwitcher locale={locale} />
         <Link
           href="/admin/login"
@@ -37,6 +39,8 @@ export default function HeaderNav({ locale }) {
           {t(locale, 'nav.login')}
         </Link>
       </div>
+
+      <CartIcon locale={locale} className="md:hidden" />
 
       <button
         type="button"

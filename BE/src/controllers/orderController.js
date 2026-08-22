@@ -2,32 +2,30 @@ const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Customer = require('../models/Customer');
 const Product = require('../models/Product');
+const ShopSettings = require('../models/ShopSettings');
 const asyncHandler = require('../middleware/asyncHandler');
 const { ORDER_STATUSES } = require('../constants/orderStatus');
+const { sendMail } = require('../utils/mailer');
+const { buildNewOrderEmail } = require('../utils/emailTemplates');
+
+async function notifyNewOrder(order, customer, itemLabels) {
+  try {
+    const settings = await ShopSettings.findOne();
+    const recipients = settings?.notificationEmails || [];
+    if (recipients.length === 0) return;
+
+    const { subject, html } = buildNewOrderEmail({ order, customer, itemLabels });
+    await sendMail({ to: recipients, subject, html });
+  } catch (err) {
+    console.error('Gửi email thông báo đơn hàng thất bại:', err.message);
+  }
+}
 
 const createOrder = asyncHandler(async function (req, res) {
-  const {
-    productId,
-    sizeLabel,
-    quantity,
-    note,
-    image,
-    deliveryDate,
-    deliveryMethod,
-    address,
-    customerName,
-    customerPhone,
-    paymentMethod,
-  } = req.body;
+  const { items, deliveryDate, deliveryMethod, address, customerName, customerPhone, paymentMethod } = req.body;
 
-  if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(400).json({ message: 'Mẫu bánh không hợp lệ' });
-  }
-  if (!sizeLabel) {
-    return res.status(400).json({ message: 'Vui lòng chọn size' });
-  }
-  if (!Number.isInteger(quantity) || quantity < 1) {
-    return res.status(400).json({ message: 'Số lượng không hợp lệ' });
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ message: 'Giỏ hàng đang trống' });
   }
   if (!deliveryDate || Number.isNaN(new Date(deliveryDate).getTime())) {
     return res.status(400).json({ message: 'Vui lòng chọn ngày giờ nhận' });
@@ -48,18 +46,49 @@ const createOrder = asyncHandler(async function (req, res) {
     return res.status(400).json({ message: 'Vui lòng nhập tên và số điện thoại' });
   }
 
-  const product = await Product.findById(productId);
-  if (!product) {
-    return res.status(404).json({ message: 'Không tìm thấy mẫu bánh' });
+  const resolvedItems = [];
+  const itemLabels = [];
+
+  for (const raw of items) {
+    const { productId, sizeLabel, quantity, note, image } = raw || {};
+
+    if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: 'Mẫu bánh không hợp lệ' });
+    }
+    if (!sizeLabel) {
+      return res.status(400).json({ message: 'Vui lòng chọn size' });
+    }
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      return res.status(400).json({ message: 'Số lượng không hợp lệ' });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Không tìm thấy mẫu bánh' });
+    }
+
+    const size = product.sizes.find((s) => s.label === sizeLabel);
+    if (!size) {
+      return res.status(400).json({ message: 'Size không hợp lệ' });
+    }
+    if (size.status === 'out_of_stock') {
+      return res.status(400).json({ message: `"${product.name?.vi}" (${size.label}) hiện đã hết hàng` });
+    }
+
+    const selectedImage = image && product.images.includes(image) ? image : product.images[0] || '';
+
+    resolvedItems.push({
+      productId: product._id,
+      sizeLabel: size.label,
+      quantity,
+      note: note || '',
+      price: size.price,
+      image: selectedImage,
+    });
+    itemLabels.push(product.name?.vi || 'Sản phẩm');
   }
 
-  const size = product.sizes.find((s) => s.label === sizeLabel);
-  if (!size) {
-    return res.status(400).json({ message: 'Size không hợp lệ' });
-  }
-  if (size.status === 'out_of_stock') {
-    return res.status(400).json({ message: 'Size này hiện đã hết hàng' });
-  }
+  const totalAmount = resolvedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const customer = await Customer.findOneAndUpdate(
     { phone: customerPhone },
@@ -67,21 +96,9 @@ const createOrder = asyncHandler(async function (req, res) {
     { new: true, upsert: true, setDefaultsOnInsert: true }
   );
 
-  const totalAmount = size.price * quantity;
-  const selectedImage = image && product.images.includes(image) ? image : product.images[0] || '';
-
   const order = await Order.create({
     customerId: customer._id,
-    items: [
-      {
-        productId: product._id,
-        sizeLabel: size.label,
-        quantity,
-        note: note || '',
-        price: size.price,
-        image: selectedImage,
-      },
-    ],
+    items: resolvedItems,
     deliveryDate,
     deliveryMethod,
     totalAmount,
@@ -91,6 +108,8 @@ const createOrder = asyncHandler(async function (req, res) {
 
   customer.orderHistory.push(order._id);
   await customer.save();
+
+  notifyNewOrder(order, customer, itemLabels);
 
   res.status(201).json(order);
 });

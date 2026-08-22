@@ -1,6 +1,7 @@
 'use client';
 
 import { cloudinaryThumbUrl } from '@/lib/cloudinary';
+import HorizontalScroller from './HorizontalScroller';
 
 export default function ImageGallery({ images, alt, activeIndex = 0, onChangeIndex }) {
   const hasImages = images && images.length > 0;
@@ -23,7 +24,7 @@ export default function ImageGallery({ images, alt, activeIndex = 0, onChangeInd
       </div>
 
       {hasImages && images.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto">
+        <HorizontalScroller className="flex gap-2 overflow-x-auto">
           {images.map((src, index) => (
             <button
               key={src + index}
@@ -42,7 +43,7 @@ export default function ImageGallery({ images, alt, activeIndex = 0, onChangeInd
               />
             </button>
           ))}
-        </div>
+        </HorizontalScroller>
       )}
     </div>
   );

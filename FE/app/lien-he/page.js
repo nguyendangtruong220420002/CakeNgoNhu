@@ -8,7 +8,7 @@ export default async function ContactPage() {
   const settings = await getShopSettings();
 
   return (
-    <main className="min-h-screen px-4 py-8 md:py-12 max-w-3xl mx-auto pb-24 md:pb-12">
+    <main className="min-h-screen px-4 py-8 md:py-12 max-w-3xl mx-auto">
       <h1 className="font-serif text-2xl md:text-3xl text-text text-center mb-8">Liên hệ</h1>
 
       {!settings ? (
@@ -65,7 +65,7 @@ export default async function ContactPage() {
             <div className="rounded-2xl overflow-hidden aspect-video">
               <iframe
                 title="Bản đồ"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(settings.address)}&output=embed`}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(`${settings.shopName} ${settings.address}`)}&output=embed`}
                 className="w-full h-full border-0"
                 loading="lazy"
               />

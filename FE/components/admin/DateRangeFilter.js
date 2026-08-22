@@ -2,9 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import DateTimePicker, { vnNow } from '@/components/DateTimePicker';
+
+function pad(n) {
+  return String(n).padStart(2, '0');
+}
 
 function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+  const now = vnNow();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
 export default function DateRangeFilter({ basePath, from, to, isAll }) {
@@ -39,29 +45,17 @@ export default function DateRangeFilter({ basePath, from, to, isAll }) {
 
   return (
     <form onSubmit={applyRange} className="flex flex-wrap items-end gap-3 mb-6">
-      <div>
+      <div className="w-40">
         <label className="block text-text font-medium mb-1 text-sm" htmlFor="from">
           Từ ngày
         </label>
-        <input
-          id="from"
-          type="date"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-          className="rounded-xl border border-primary/40 bg-white px-3 py-2 text-sm text-text focus:outline-none focus:border-primary"
-        />
+        <DateTimePicker id="from" mode="date" compact value={fromDate} onChange={setFromDate} />
       </div>
-      <div>
+      <div className="w-40">
         <label className="block text-text font-medium mb-1 text-sm" htmlFor="to">
           Đến ngày
         </label>
-        <input
-          id="to"
-          type="date"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-          className="rounded-xl border border-primary/40 bg-white px-3 py-2 text-sm text-text focus:outline-none focus:border-primary"
-        />
+        <DateTimePicker id="to" mode="date" compact value={toDate} onChange={setToDate} />
       </div>
       <button
         type="submit"

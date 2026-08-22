@@ -33,6 +33,10 @@
   "sticky.call": "Gọi ngay",
   "sticky.zalo": "Zalo",
   "sticky.order": "Đặt bánh ngay",
+  "cart.title": "Giỏ hàng",
+  "cart.addToCart": "Thêm vào giỏ hàng",
+  "cart.addedToCart": "Đã thêm vào giỏ hàng",
+  "cart.viewCart": "Xem giỏ hàng",
   "footer.contact": "Liên hệ",
   "footer.facebook": "Facebook",
   "footer.maps": "Google Maps"

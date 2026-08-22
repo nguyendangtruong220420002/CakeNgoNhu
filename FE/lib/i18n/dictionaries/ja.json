@@ -33,6 +33,10 @@
   "sticky.call": "電話する",
   "sticky.zalo": "Zalo",
   "sticky.order": "今すぐ注文",
+  "cart.title": "カート",
+  "cart.addToCart": "カートに追加",
+  "cart.addedToCart": "カートに追加しました",
+  "cart.viewCart": "カートを見る",
   "footer.contact": "お問い合わせ",
   "footer.facebook": "Facebook",
   "footer.maps": "Googleマップ"

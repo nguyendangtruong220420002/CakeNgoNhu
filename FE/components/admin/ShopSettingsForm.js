@@ -12,9 +12,24 @@ export default function ShopSettingsForm({ initialSettings }) {
   const [address, setAddress] = useState(initialSettings?.address || '');
   const [googleMapsUrl, setGoogleMapsUrl] = useState(initialSettings?.googleMapsUrl || '');
   const [facebookUrl, setFacebookUrl] = useState(initialSettings?.facebookUrl || '');
+  const [notificationEmails, setNotificationEmails] = useState(
+    initialSettings?.notificationEmails?.length ? initialSettings.notificationEmails : ['']
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  function updateEmail(index, value) {
+    setNotificationEmails((prev) => prev.map((e, i) => (i === index ? value : e)));
+  }
+
+  function addEmail() {
+    setNotificationEmails((prev) => [...prev, '']);
+  }
+
+  function removeEmail(index) {
+    setNotificationEmails((prev) => prev.filter((_, i) => i !== index));
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -33,6 +48,7 @@ export default function ShopSettingsForm({ initialSettings }) {
           address: address.trim(),
           googleMapsUrl: googleMapsUrl.trim(),
           facebookUrl: facebookUrl.trim(),
+          notificationEmails: notificationEmails.map((e) => e.trim()).filter(Boolean),
         }),
       });
 
@@ -120,6 +136,42 @@ export default function ShopSettingsForm({ initialSettings }) {
           placeholder="https://facebook.com/..."
           className="w-full rounded-xl border border-primary/40 bg-white px-4 py-3 text-text focus:outline-none focus:border-primary"
         />
+      </div>
+
+      <div>
+        <label className="block text-text font-medium mb-2">Email nhận thông báo đơn hàng mới</label>
+        <p className="text-text/50 text-sm mb-3">
+          Mỗi khi khách đặt hàng, hệ thống sẽ gửi email chi tiết đơn hàng tới các địa chỉ dưới đây.
+        </p>
+        <div className="space-y-2">
+          {notificationEmails.map((email, index) => (
+            <div key={index} className="flex gap-2">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => updateEmail(index, e.target.value)}
+                placeholder="vd: chutiem@gmail.com"
+                className="flex-1 rounded-xl border border-primary/40 bg-white px-4 py-3 text-text focus:outline-none focus:border-primary"
+              />
+              {notificationEmails.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeEmail(index)}
+                  className="px-3 text-text/60 hover:text-red-600"
+                >
+                  Xoá
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={addEmail}
+          className="mt-2 text-sm text-primary-dark hover:underline"
+        >
+          + Thêm email
+        </button>
       </div>
 
       {error && <p className="text-red-600 text-sm">{error}</p>}

@@ -33,6 +33,10 @@
   "sticky.call": "전화하기",
   "sticky.zalo": "Zalo",
   "sticky.order": "지금 주문하기",
+  "cart.title": "장바구니",
+  "cart.addToCart": "장바구니에 담기",
+  "cart.addedToCart": "장바구니에 추가되었습니다",
+  "cart.viewCart": "장바구니 보기",
   "footer.contact": "문의하기",
   "footer.facebook": "Facebook",
   "footer.maps": "구글 지도"

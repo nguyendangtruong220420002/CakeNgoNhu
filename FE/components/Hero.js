@@ -2,7 +2,7 @@ import { t } from '@/lib/i18n/getDictionary';
 
 export default function Hero({ locale }) {
   return (
-    <section className="px-4 pt-12 pb-16 md:pt-20 md:pb-24 text-center max-w-3xl mx-auto">
+    <section className="px-4 pt-6 pb-6 md:pt-10 md:pb-10 text-center max-w-3xl mx-auto">
       <span className="inline-flex items-center gap-2 bg-white/60 border border-accent text-primary text-xs md:text-sm font-medium uppercase tracking-wider px-5 py-1.5 rounded-full mb-5 shadow-sm">
         <svg className="h-3.5 w-3.5 text-accent shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2l1.5 3.5L17 7l-3.5 1.5L12 12l-1.5-3.5L7 7l3.5-1.5L12 2z" />

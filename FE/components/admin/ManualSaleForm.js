@@ -3,11 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MoneyInput from '@/components/MoneyInput';
+import DateTimePicker, { vnNow } from '@/components/DateTimePicker';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
+function pad(n) {
+  return String(n).padStart(2, '0');
+}
+
 function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+  const now = vnNow();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
 export default function ManualSaleForm() {
@@ -145,13 +151,7 @@ export default function ManualSaleForm() {
           <label className="block text-text font-medium mb-2 text-sm" htmlFor="saleDate">
             Ngày bán
           </label>
-          <input
-            id="saleDate"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full rounded-xl border border-primary/40 bg-white px-3 py-2 text-sm text-text focus:outline-none focus:border-primary"
-          />
+          <DateTimePicker id="saleDate" mode="date" compact value={date} onChange={setDate} />
           <p className="text-text/50 text-xs mt-1">Mặc định hôm nay, có thể sửa nếu ghi nhận trễ.</p>
         </div>
       </div>

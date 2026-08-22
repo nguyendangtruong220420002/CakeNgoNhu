@@ -18,7 +18,7 @@ export default async function ProductDetailPage({ params }) {
   const description = pickLocalized(product.description, locale);
 
   return (
-    <main className="min-h-screen px-4 py-8 md:py-12 max-w-5xl mx-auto pb-24 md:pb-12">
+    <main className="min-h-screen px-4 pt-6 pb-8 md:pt-8 md:pb-12 max-w-5xl mx-auto">
       <Link
         href="/san-pham"
         className="inline-flex items-center gap-1 text-text/70 hover:text-primary transition-colors mb-4"

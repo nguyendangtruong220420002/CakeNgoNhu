@@ -33,6 +33,10 @@
   "sticky.call": "Call",
   "sticky.zalo": "Zalo",
   "sticky.order": "Order now",
+  "cart.title": "Cart",
+  "cart.addToCart": "Add to cart",
+  "cart.addedToCart": "Added to cart",
+  "cart.viewCart": "View cart",
   "footer.contact": "Contact",
   "footer.facebook": "Facebook",
   "footer.maps": "Google Maps"

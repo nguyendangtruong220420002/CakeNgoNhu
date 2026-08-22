@@ -8,6 +8,7 @@ import HorizontalScroller from '@/components/HorizontalScroller';
 import { cloudinaryThumbUrl } from '@/lib/cloudinary';
 import MoneyInput from '@/components/MoneyInput';
 import { useConfirm } from '@/components/ConfirmProvider';
+import DateTimePicker from '@/components/DateTimePicker';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
@@ -323,20 +324,20 @@ function DateRangeFilterButton({ label, selected, onApply }) {
           <div className="flex flex-col gap-2 mb-2">
             <div>
               <label className="block text-xs text-text/60 mb-1">Từ ngày</label>
-              <input
-                type="date"
+              <DateTimePicker
+                mode="date"
+                compact
                 value={pending.from}
-                onChange={(e) => setPending((p) => ({ ...p, from: e.target.value }))}
-                className="w-full rounded-lg border border-primary/30 px-2 py-1.5 text-sm"
+                onChange={(val) => setPending((p) => ({ ...p, from: val }))}
               />
             </div>
             <div>
               <label className="block text-xs text-text/60 mb-1">Đến ngày</label>
-              <input
-                type="date"
+              <DateTimePicker
+                mode="date"
+                compact
                 value={pending.to}
-                onChange={(e) => setPending((p) => ({ ...p, to: e.target.value }))}
-                className="w-full rounded-lg border border-primary/30 px-2 py-1.5 text-sm"
+                onChange={(val) => setPending((p) => ({ ...p, to: val }))}
               />
             </div>
           </div>
@@ -596,12 +597,7 @@ function OrderEditModal({ order, onClose, onSaved }) {
               <label className="block text-text/70 text-sm mb-1">
                 {isManual ? 'Ngày bán' : 'Ngày giờ nhận'}
               </label>
-              <input
-                type={isManual ? 'date' : 'datetime-local'}
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full rounded-xl border border-primary/40 bg-white px-3 py-2 text-sm"
-              />
+              <DateTimePicker mode={isManual ? 'date' : 'datetime'} compact value={date} onChange={setDate} />
             </div>
             <div>
               <label className="block text-text/70 text-sm mb-1">Số lượng</label>

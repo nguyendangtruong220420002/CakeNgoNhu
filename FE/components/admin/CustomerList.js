@@ -6,6 +6,7 @@ import MoneyInput from '@/components/MoneyInput';
 import Pagination from './Pagination';
 import HorizontalScroller from '@/components/HorizontalScroller';
 import { useConfirm } from '@/components/ConfirmProvider';
+import DateTimePicker from '@/components/DateTimePicker';
 
 const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
@@ -74,14 +75,9 @@ function OrderEditRow({ order, onCancel, onSaved }) {
     <tr className="border-b border-primary/5 last:border-0 bg-accent/10">
       <td className="py-2 pr-3" colSpan={6}>
         <div className="flex flex-wrap items-end gap-3">
-          <div>
+          <div className="w-36">
             <label className="block text-text/70 text-xs mb-1">Ngày</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="rounded-lg border border-primary/40 bg-white px-2 py-1.5 text-sm"
-            />
+            <DateTimePicker mode="date" compact value={date} onChange={setDate} />
           </div>
           <div>
             <label className="block text-text/70 text-xs mb-1">Số lượng</label>

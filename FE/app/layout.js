@@ -1,6 +1,7 @@
 import './globals.css';
 import SiteChrome from '@/components/SiteChrome';
 import { ConfirmProvider } from '@/components/ConfirmProvider';
+import { CartProvider } from '@/components/CartProvider';
 import { getShopSettings } from '@/lib/api';
 import { getServerLocale } from '@/lib/i18n/serverLocale';
 
@@ -16,9 +17,11 @@ export default async function RootLayout({ children }) {
     <html lang={locale}>
       <body className="font-sans">
         <ConfirmProvider>
-          <SiteChrome settings={settings} locale={locale}>
-            {children}
-          </SiteChrome>
+          <CartProvider>
+            <SiteChrome settings={settings} locale={locale}>
+              {children}
+            </SiteChrome>
+          </CartProvider>
         </ConfirmProvider>
       </body>
     </html>

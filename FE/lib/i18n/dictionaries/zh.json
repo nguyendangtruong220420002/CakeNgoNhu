@@ -33,6 +33,10 @@
   "sticky.call": "致电",
   "sticky.zalo": "Zalo",
   "sticky.order": "立即订购",
+  "cart.title": "购物车",
+  "cart.addToCart": "加入购物车",
+  "cart.addedToCart": "已加入购物车",
+  "cart.viewCart": "查看购物车",
   "footer.contact": "联系我们",
   "footer.facebook": "Facebook",
   "footer.maps": "谷歌地图"

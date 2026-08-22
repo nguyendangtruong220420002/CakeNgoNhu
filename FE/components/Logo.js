@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-const ASPECT_RATIO = 259 / 75;
+const ASPECT_RATIO = 239 / 70;
 
 export default function Logo({ size = 56, className = '' }) {
   const height = size;
