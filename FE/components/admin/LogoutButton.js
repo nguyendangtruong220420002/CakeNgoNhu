@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
 export default function LogoutButton() {
   const router = useRouter();

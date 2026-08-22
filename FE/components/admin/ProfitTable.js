@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
 function DayDetail({ date }) {
   const [detail, setDetail] = useState(null);

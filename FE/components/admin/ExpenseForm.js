@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MoneyInput from '@/components/MoneyInput';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = ''; // gọi qua rewrite cùng origin, xem next.config.js
 
 function todayDateInput() {
   return new Date().toISOString().slice(0, 10);
