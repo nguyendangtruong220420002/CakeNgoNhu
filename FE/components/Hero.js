@@ -1,27 +1,49 @@
-import { t } from '@/lib/i18n/getDictionary';
+import { Cake, Sparkles, Truck, Store, Heart } from "lucide-react";
+import { t } from "@/lib/i18n/getDictionary";
+
+const FEATURES = [
+  { icon: Cake, key: "home.feature.fresh" },
+  { icon: Sparkles, key: "home.feature.custom" },
+  { icon: Truck, key: "home.feature.delivery" },
+  { icon: Store, key: "home.feature.pickup" },
+];
 
 export default function Hero({ locale }) {
   return (
-    <section className="px-4 pt-6 pb-6 md:pt-10 md:pb-10 text-center max-w-3xl mx-auto">
-      <span className="inline-flex items-center gap-2 bg-white/60 border border-accent text-primary text-xs md:text-sm font-medium uppercase tracking-wider px-5 py-1.5 rounded-full mb-5 shadow-sm">
-        <svg className="h-3.5 w-3.5 text-accent shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M12 2l1.5 3.5L17 7l-3.5 1.5L12 12l-1.5-3.5L7 7l3.5-1.5L12 2z" />
-          <path d="M5 15l.8 1.9L7.7 17.7l-1.9.8L5 20.4l-.8-1.9L2.3 17.7l1.9-.8L5 15z" />
-          <path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14z" />
-        </svg>
-        {t(locale, 'hero.badge')}
+    <section className="relative px-4 pt-6 pb-2 md:pt-10 md:pb-8 text-center max-w-3xl mx-auto">
+      <span className="inline-flex items-center gap-2 text-primary text-[11px] font-semibold uppercase tracking-[0.15em] mb-4">
+        <Cake className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        {t(locale, "hero.badge")}
+        <Cake className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
       </span>
-      <h1 className="font-serif text-3xl md:text-5xl text-text leading-tight mb-4">
-        {t(locale, 'hero.title')}
+      <Heart
+        className="absolute top-2 right-8 md:right-16 h-3.5 w-3.5 text-accent fill-accent/40 -rotate-12"
+        strokeWidth={1.75}
+        aria-hidden="true"
+      />
+
+      <h1 className="font-serif font-bold text-[#1A1A1A] text-[26px] md:text-[32px] leading-snug mb-1 px-3 md:px-0">
+        {t(locale, "hero.title")}
       </h1>
-      <p className="text-text/70 text-base md:text-lg mb-2">{t(locale, 'hero.categories')}</p>
-      <p className="text-text/70 text-base md:text-lg mb-8">{t(locale, 'hero.tagline')}</p>
-      <a
-        href="/san-pham"
-        className="inline-block bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-xl transition-colors"
-      >
-        {t(locale, 'hero.cta')}
-      </a>
+
+      <p className="text-text text-sm md:text-base leading-relaxed mb-6 max-w-xl mx-auto px-3 md:px-0">
+        {t(locale, "hero.description")}
+      </p>
+
+      <div className="grid grid-cols-4 gap-2 md:gap-4 max-w-xl mx-auto">
+        {FEATURES.map(({ icon: Icon, key }) => (
+          <div key={key} className="flex flex-col items-center gap-1.5">
+            <Icon
+              className="h-[34px] w-[34px] md:h-[38px] md:w-[38px] text-primary"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
+            <span className="text-text/80 text-xs md:text-sm leading-tight">
+              {t(locale, key)}
+            </span>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

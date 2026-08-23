@@ -1,5 +1,5 @@
-import { MapPin, Phone } from 'lucide-react';
-import { t } from '@/lib/i18n/getDictionary';
+import { MapPin, Phone, Clock, Heart, Leaf } from "lucide-react";
+import { t } from "@/lib/i18n/getDictionary";
 
 function FacebookIcon(props) {
   return (
@@ -20,18 +20,20 @@ export default function Footer({ settings, locale }) {
 
   const links = [
     settings.facebookUrl && {
-      key: 'facebook',
+      key: "facebook",
       href: settings.facebookUrl,
-      label: t(locale, 'footer.facebook'),
+      label: t(locale, "footer.facebook"),
       external: true,
     },
   ].filter(Boolean);
 
   return (
-    <footer className="mt-12 border-t-2 border-accent/60 bg-white/40 pb-[76px] md:pb-0">
+    <footer className="mt-4 border-t-2 border-[#E8D5BC] bg-white/40 pb-[76px] md:pb-0">
       <div className="max-w-4xl mx-auto px-4 pt-8 pb-5 flex flex-col items-center text-center md:items-start md:text-left gap-3">
         <div className="flex flex-col items-center md:items-start gap-3 w-full">
-          <p className="font-serif text-xl text-text">{settings.shopName}</p>
+          <p className="font-serif font-bold text-2xl text-[#1A1A1A]">
+            {settings.shopName}
+          </p>
           <div className="flex items-start gap-3 w-full">
             <div className="space-y-2.5 text-sm text-text/70">
               {settings.address && (
@@ -47,7 +49,10 @@ export default function Footer({ settings, locale }) {
                   <span className="shrink-0 w-6 h-6 flex items-center justify-center rounded-lg border border-primary/40 text-text">
                     <Phone size={ICON_SIZE} />
                   </span>
-                  <a href={`tel:${settings.hotline}`} className="hover:text-primary transition-colors">
+                  <a
+                    href={`tel:${settings.hotline}`}
+                    className="hover:text-primary transition-colors"
+                  >
                     {settings.hotline}
                   </a>
                 </p>
@@ -59,23 +64,34 @@ export default function Footer({ settings, locale }) {
                   </span>
                   <a
                     href={link.href}
-                    target={link.external ? '_blank' : undefined}
-                    rel={link.external ? 'noopener noreferrer' : undefined}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
                     className="hover:text-primary transition-colors"
                   >
                     {link.label}
                   </a>
                 </p>
               ))}
+              {settings.businessHours && (
+                <p className="flex items-center gap-2.5">
+                  <span className="shrink-0 w-6 h-6 flex items-center justify-center rounded-lg border border-primary/40 text-text">
+                    <Clock size={ICON_SIZE} />
+                  </span>
+                  <span>{settings.businessHours}</span>
+                </p>
+              )}
             </div>
 
             {settings.address && (
               <a
-                href={settings.googleMapsUrl || `https://www.google.com/maps?q=${encodeURIComponent(`${settings.shopName} ${settings.address}`)}`}
+                href={
+                  settings.googleMapsUrl ||
+                  `https://www.google.com/maps?q=${encodeURIComponent(`${settings.shopName} ${settings.address}`)}`
+                }
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={t(locale, 'footer.maps')}
-                className="shrink-0 w-32 h-32 md:w-auto md:flex-1 rounded-lg overflow-hidden border border-primary/30 block"
+                aria-label={t(locale, "footer.maps")}
+                className="shrink-0 w-32 h-44 md:w-auto md:flex-1 rounded-lg overflow-hidden border border-primary/30 block"
               >
                 <iframe
                   title="Bản đồ nhỏ"
@@ -88,9 +104,26 @@ export default function Footer({ settings, locale }) {
             )}
           </div>
         </div>
+
+        <div className="w-full bg-white/40 border border-[#E8D5BC] rounded-2xl px-4 py-3 mt-2 text-center">
+          <p className="text-black text-sm italic inline-flex items-center gap-2 text-left">
+            <Heart
+              className="h-3 w-3 text-primary/60 fill-primary/20 shrink-0"
+              style={{ transform: "translateY(-6px)" }}
+              aria-hidden="true"
+            />
+            {t(locale, "footer.thanksQuote")}
+            <Leaf
+              className="h-3 w-3 text-primary/60 shrink-0"
+              style={{ transform: "translateY(6px)" }}
+              aria-hidden="true"
+            />
+          </p>
+        </div>
       </div>
-      <div className="border-t border-primary/10 py-3 text-center text-sm text-text/40">
-        © {new Date().getFullYear()} {settings.shopName}
+      <div className="border-t border-primary/10 py-1 text-center text-[10px] text-text/40">
+        © {new Date().getFullYear()} {settings.shopName} ·
+        nguyendangtruong78910@gmail.com
       </div>
     </footer>
   );

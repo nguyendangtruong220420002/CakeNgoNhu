@@ -7,6 +7,7 @@ const shopSettingsSchema = new mongoose.Schema(
     address: { type: String, default: '' },
     googleMapsUrl: { type: String, default: '' },
     facebookUrl: { type: String, default: '' },
+    businessHours: { type: String, default: '' },
     notificationEmails: { type: [String], default: [] },
   },
   { timestamps: true }

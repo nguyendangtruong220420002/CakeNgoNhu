@@ -17,12 +17,19 @@ export default function HorizontalScroller({ children, className = '' }) {
   }
 
   useEffect(() => {
-    updateArrows();
     const el = ref.current;
     if (!el) return;
-    const onResize = () => updateArrows();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    updateArrows();
+    // ResizeObserver bắt luôn các thay đổi kích thước do ảnh/font load xong sau khi mount,
+    // tránh trường hợp scrollWidth đo lúc content chưa ổn định làm nút </> lúc ẩn lúc hiện sai.
+    const observer = new ResizeObserver(() => updateArrows());
+    observer.observe(el);
+    for (const child of el.children) observer.observe(child);
+    window.addEventListener('resize', updateArrows);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateArrows);
+    };
   }, [children]);
 
   function scrollByAmount(dir) {
@@ -77,7 +84,7 @@ export default function HorizontalScroller({ children, className = '' }) {
           type="button"
           onClick={() => scrollByAmount(-1)}
           aria-label="Cuộn sang trái"
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/50 backdrop-blur-sm border border-primary/40 text-primary shadow-md flex items-center justify-center sm:hidden"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/25 backdrop-blur-sm border border-primary/30 text-primary shadow-sm flex items-center justify-center sm:hidden"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -103,7 +110,7 @@ export default function HorizontalScroller({ children, className = '' }) {
           type="button"
           onClick={() => scrollByAmount(1)}
           aria-label="Cuộn sang phải"
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/50 backdrop-blur-sm border border-primary/40 text-primary shadow-md flex items-center justify-center sm:hidden"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/25 backdrop-blur-sm border border-primary/30 text-primary shadow-sm flex items-center justify-center sm:hidden"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

@@ -12,6 +12,7 @@ export default function ShopSettingsForm({ initialSettings }) {
   const [address, setAddress] = useState(initialSettings?.address || '');
   const [googleMapsUrl, setGoogleMapsUrl] = useState(initialSettings?.googleMapsUrl || '');
   const [facebookUrl, setFacebookUrl] = useState(initialSettings?.facebookUrl || '');
+  const [businessHours, setBusinessHours] = useState(initialSettings?.businessHours || '');
   const [notificationEmails, setNotificationEmails] = useState(
     initialSettings?.notificationEmails?.length ? initialSettings.notificationEmails : ['']
   );
@@ -48,6 +49,7 @@ export default function ShopSettingsForm({ initialSettings }) {
           address: address.trim(),
           googleMapsUrl: googleMapsUrl.trim(),
           facebookUrl: facebookUrl.trim(),
+          businessHours: businessHours.trim(),
           notificationEmails: notificationEmails.map((e) => e.trim()).filter(Boolean),
         }),
       });
@@ -134,6 +136,20 @@ export default function ShopSettingsForm({ initialSettings }) {
           value={facebookUrl}
           onChange={(e) => setFacebookUrl(e.target.value)}
           placeholder="https://facebook.com/..."
+          className="w-full rounded-xl border border-primary/40 bg-white px-4 py-3 text-text focus:outline-none focus:border-primary"
+        />
+      </div>
+
+      <div>
+        <label className="block text-text font-medium mb-2" htmlFor="businessHours">
+          Giờ mở cửa
+        </label>
+        <input
+          id="businessHours"
+          type="text"
+          value={businessHours}
+          onChange={(e) => setBusinessHours(e.target.value)}
+          placeholder="VD: 08:00 - 20:00 (Mỗi ngày)"
           className="w-full rounded-xl border border-primary/40 bg-white px-4 py-3 text-text focus:outline-none focus:border-primary"
         />
       </div>

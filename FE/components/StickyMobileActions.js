@@ -1,4 +1,24 @@
+import { Phone } from 'lucide-react';
 import { t } from '@/lib/i18n/getDictionary';
+
+function ZaloBadge(props) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" {...props}>
+      <rect width="48" height="48" rx="10" fill="#0068FF" />
+      <text
+        x="24"
+        y="30"
+        textAnchor="middle"
+        fontFamily="Arial, sans-serif"
+        fontWeight="700"
+        fontSize="15"
+        fill="#fff"
+      >
+        Zalo
+      </text>
+    </svg>
+  );
+}
 
 export default function StickyMobileActions({ settings, locale }) {
   const phone = settings?.hotline || '0123456789';
@@ -9,18 +29,19 @@ export default function StickyMobileActions({ settings, locale }) {
       <a
         href={`tel:${phone}`}
         aria-label={t(locale, 'sticky.call')}
-        className="shrink-0 w-12 h-12 flex items-center justify-center border border-primary text-primary rounded-xl"
+        className="shrink-0 w-12 h-12 flex items-center justify-center rounded-xl"
+        style={{ backgroundColor: '#22C55E' }}
       >
-        📞
+        <Phone className="h-5 w-5 text-white" fill="white" aria-hidden="true" />
       </a>
       <a
         href={zaloUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={t(locale, 'sticky.zalo')}
-        className="shrink-0 w-12 h-12 flex items-center justify-center border border-primary text-primary rounded-xl text-xs font-medium"
+        className="shrink-0 w-12 h-12 rounded-xl overflow-hidden"
       >
-        Zalo
+        <ZaloBadge className="w-full h-full" />
       </a>
       <a
         href="/san-pham"

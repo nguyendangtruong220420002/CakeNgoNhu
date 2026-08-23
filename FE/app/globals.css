@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --color-background: #FFF8EE;   /* Nền chính — kem sữa nhạt */
-  --color-primary: #D8A25E;      /* Nút, tiêu đề, hành động chính — caramel/vàng bơ */
-  --color-primary-dark: #C89666; /* Hover, viền — nâu kem đậm */
-  --color-text: #4A3728;         /* Chữ chính — nâu socola đậm */
-  --color-accent: #F4C2C2;       /* Điểm nhấn phụ — hồng pastel */
+  --color-background: #FFFBF5;   /* Nền chính — kem sữa nhạt */
+  --color-primary: #7C2128;      /* Nút, tiêu đề, badge, hành động chính — đỏ mận đậm */
+  --color-primary-dark: #5E181E; /* Hover, viền — đỏ mận tối hơn */
+  --color-text: #4A2E1E;         /* Chữ chính — nâu socola đậm */
+  --color-accent: #C9A876;       /* Điểm nhấn phụ — vàng đồng/gold */
 
-  --font-heading: Georgia, 'Times New Roman', serif;
-  --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-heading: 'Baloo 2', Georgia, 'Times New Roman', serif;
+  --font-body: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 body {

@@ -52,7 +52,7 @@ Các thông tin này hiển thị ở: **Header/Footer** (mọi trang), **nút Z
 ### Tông màu chủ đạo — màu kem
 
 ```css
---color-background: #F3E4D3;   /* Nền chính — kem be ấm */
+--color-background: #FFFBF5;   /* Nền chính — kem sữa nhạt */
 --color-primary: #7C2128;      /* Nút, tiêu đề, badge, hành động chính — đỏ mận đậm */
 --color-primary-dark: #5E181E; /* Hover, viền — đỏ mận tối hơn */
 --color-text: #4A2E1E;         /* Chữ chính — nâu socola đậm */

@@ -132,14 +132,14 @@ Cập nhật theo đúng bảng màu trong thiết kế menu thực tế của N
 
 | Vai trò | Mã màu | Mô tả |
 |---|---|---|
-| Nền chính | `#F3E4D3` | Kem be ấm |
+| Nền chính | `#FFFBF5` | Kem sữa nhạt |
 | Nhấn chính (badge, tiêu đề, nút) | `#7C2128` | Đỏ mận đậm — màu chủ đạo thương hiệu |
 | Nhấn đậm (hover, viền) | `#5E181E` | Đỏ mận tối hơn |
 | Chữ chính | `#4A2E1E` | Nâu socola đậm, dễ đọc |
 | Điểm nhấn phụ (viền, hoạ tiết) | `#C9A876` | Vàng đồng/gold nhạt |
 
 **Nguyên tắc dùng màu:**
-- Nền tổng thể luôn là kem be `#F3E4D3`, không dùng trắng tinh để giữ cảm giác ấm áp, thủ công
+- Nền tổng thể luôn là kem sữa nhạt `#FFF8EE`, không dùng trắng tinh để giữ cảm giác ấm áp, thủ công
 - Các khối tiêu đề lớn, badge số thứ tự, nút hành động chính (Đặt bánh, Thanh toán) dùng đỏ mận `#7C2128`, chữ trắng — tạo điểm nhấn sang trọng, nổi bật trên nền kem
 - Chữ tiêu đề/nội dung dùng nâu socola `#4A2E1E` để tương phản tốt, dễ đọc
 - Vàng đồng `#C9A876` dùng cho viền trang trí, icon, đường kẻ phân cách — không dùng làm nền lớn
