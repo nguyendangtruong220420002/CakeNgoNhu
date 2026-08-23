@@ -7,9 +7,9 @@ const CARDS = [
   { icon: Store, titleKey: 'home.card.pickup.title', descKey: 'home.card.pickup.desc' },
 ];
 
-export default function FeatureCardsSection({ locale }) {
+export default function FeatureCardsSection({ locale, maxWidth = 'max-w-4xl' }) {
   return (
-    <section className="px-4 pt-3 pb-8 md:pb-10 max-w-4xl mx-auto">
+    <section className={`px-4 pt-3 pb-3 md:pb-4 mx-auto ${maxWidth}`}>
       <div className="grid grid-cols-3 gap-2 md:gap-4">
         {CARDS.map(({ icon: Icon, titleKey, descKey }) => (
           <div

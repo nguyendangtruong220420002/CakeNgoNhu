@@ -36,6 +36,8 @@
   "product.from": "부터",
   "product.noImage": "이미지 없음",
   "category.title": "케이크 카테고리",
+  "home.categoryBanner.desc": "종류, 용도, 가격대에 맞는 다양한 케이크를 둘러보세요.",
+  "home.categoryBanner.cta": "전체 케이크 보기",
   "filter.categoryLabel": "종류 / 용도",
   "filter.all": "전체",
   "filter.priceLabel": "가격대",

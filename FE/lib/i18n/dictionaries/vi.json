@@ -36,6 +36,8 @@
   "product.from": "Từ",
   "product.noImage": "Chưa có ảnh",
   "category.title": "Danh mục mẫu bánh",
+  "home.categoryBanner.desc": "Khám phá đầy đủ các mẫu bánh theo loại, dịp và mức giá phù hợp với bạn.",
+  "home.categoryBanner.cta": "Xem tất cả mẫu bánh",
   "filter.categoryLabel": "Loại / dịp",
   "filter.all": "Tất cả",
   "filter.priceLabel": "Mức giá",

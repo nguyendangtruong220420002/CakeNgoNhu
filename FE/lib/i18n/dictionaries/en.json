@@ -36,6 +36,8 @@
   "product.from": "From",
   "product.noImage": "No image",
   "category.title": "Cake Categories",
+  "home.categoryBanner.desc": "Explore our full range of cakes by type, occasion, and price to suit you.",
+  "home.categoryBanner.cta": "View all cakes",
   "filter.categoryLabel": "Type / Occasion",
   "filter.all": "All",
   "filter.priceLabel": "Price range",

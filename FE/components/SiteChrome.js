@@ -8,6 +8,8 @@ import StickyMobileActions from './StickyMobileActions';
 export default function SiteChrome({ settings, locale, children }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
+  const hideFooter =
+    pathname.startsWith('/gio-hang') || pathname.startsWith('/san-pham/') || pathname.startsWith('/lien-he');
 
   if (isAdmin) {
     return children;
@@ -17,7 +19,7 @@ export default function SiteChrome({ settings, locale, children }) {
     <>
       <SiteHeader settings={settings} locale={locale} />
       {children}
-      <Footer settings={settings} locale={locale} />
+      {!hideFooter && <Footer settings={settings} locale={locale} />}
       <StickyMobileActions settings={settings} locale={locale} />
     </>
   );

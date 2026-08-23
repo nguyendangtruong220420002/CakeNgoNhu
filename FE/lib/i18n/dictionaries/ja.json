@@ -36,6 +36,8 @@
   "product.from": "〜より",
   "product.noImage": "画像なし",
   "category.title": "ケーキ一覧",
+  "home.categoryBanner.desc": "種類・用途・価格帯から、あなたにぴったりのケーキをお探しください。",
+  "home.categoryBanner.cta": "すべてのケーキを見る",
   "filter.categoryLabel": "種類 / 用途",
   "filter.all": "すべて",
   "filter.priceLabel": "価格帯",

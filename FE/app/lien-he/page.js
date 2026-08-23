@@ -8,7 +8,7 @@ export default async function ContactPage() {
   const settings = await getShopSettings();
 
   return (
-    <main className="min-h-screen px-4 py-8 md:py-12 max-w-3xl mx-auto">
+    <main className="min-h-screen px-4 pt-8 pb-[76px] md:py-12 max-w-3xl mx-auto">
       <h1 className="font-serif text-2xl md:text-3xl text-text text-center mb-8">Liên hệ</h1>
 
       {!settings ? (

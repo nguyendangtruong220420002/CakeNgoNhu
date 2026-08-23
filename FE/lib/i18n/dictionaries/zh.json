@@ -36,6 +36,8 @@
   "product.from": "起价",
   "product.noImage": "暂无图片",
   "category.title": "蛋糕分类",
+  "home.categoryBanner.desc": "探索适合您的各类蛋糕，按类型、场合和价格挑选。",
+  "home.categoryBanner.cta": "查看全部蛋糕",
   "filter.categoryLabel": "类型 / 场合",
   "filter.all": "全部",
   "filter.priceLabel": "价格区间",

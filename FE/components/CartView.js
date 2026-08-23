@@ -45,14 +45,14 @@ export default function CartView({ locale }) {
     <>
       <Link
         href="/san-pham"
-        className="inline-flex items-center gap-1 text-text/70 hover:text-primary transition-colors mb-4"
+        className="inline-flex items-center gap-1 text-text/70 hover:text-primary transition-colors mb-1"
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
         Quay lại
       </Link>
-      <h1 className="font-serif text-2xl md:text-3xl text-text text-center mb-8">
+      <h1 className="font-serif text-2xl md:text-3xl text-text text-center mb-6">
         {isBuyNow ? 'Đặt bánh' : 'Giỏ hàng'}
       </h1>
     </>
@@ -285,8 +285,8 @@ export default function CartView({ locale }) {
   return (
     <>
       {heading}
-      <form onSubmit={handleReview} className="space-y-6">
-      <div className="bg-white/60 rounded-2xl p-4 space-y-4">
+      <form onSubmit={handleReview} className="space-y-4">
+      <div className="bg-white/60 border border-[#E8D5BC] rounded-2xl p-4 space-y-4">
         {items.map((item) => (
           <div key={item.id} className="flex gap-3 pb-4 border-b border-primary/10 last:border-0 last:pb-0">
             <div className="w-16 h-16 rounded-xl overflow-hidden bg-accent/20 shrink-0">
@@ -353,100 +353,111 @@ export default function CartView({ locale }) {
         </div>
       </div>
 
-      <div>
-        <label className="block text-text font-medium mb-2" htmlFor="deliveryDate">
-          Ngày giờ nhận bánh
-        </label>
-        <DateTimePicker
-          id="deliveryDate"
-          value={deliveryDate}
-          min={minDatetimeLocal()}
-          onChange={setDeliveryDate}
-        />
-      </div>
-
-      <div>
-        <p className="text-text font-medium mb-2">Nhận bánh</p>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setDeliveryMethod('pickup')}
-            className={`flex-1 px-4 py-3 rounded-xl border text-sm transition-colors ${
-              deliveryMethod === 'pickup'
-                ? 'bg-primary text-white border-primary'
-                : 'border-primary/40 text-text hover:border-primary'
-            }`}
-          >
-            Tự lấy tại tiệm
-          </button>
-          <button
-            type="button"
-            onClick={() => setDeliveryMethod('delivery')}
-            className={`flex-1 px-4 py-3 rounded-xl border text-sm transition-colors ${
-              deliveryMethod === 'delivery'
-                ? 'bg-primary text-white border-primary'
-                : 'border-primary/40 text-text hover:border-primary'
-            }`}
-          >
-            Giao tận nơi
-          </button>
+      <div className="bg-white/60 border border-[#E8D5BC] rounded-2xl p-4 space-y-4">
+        <div>
+          <label className="block text-text font-medium mb-2" htmlFor="deliveryDate">
+            Ngày giờ nhận bánh
+          </label>
+          <DateTimePicker
+            id="deliveryDate"
+            value={deliveryDate}
+            min={minDatetimeLocal()}
+            onChange={setDeliveryDate}
+          />
         </div>
+
+        <div className="pt-2 border-t border-primary/10">
+          <p className="text-text font-medium mb-2">Nhận bánh</p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setDeliveryMethod('pickup')}
+              className={`flex-1 px-4 py-3 rounded-xl border text-sm transition-colors ${
+                deliveryMethod === 'pickup'
+                  ? 'bg-primary text-white border-primary'
+                  : 'border-primary/40 text-text hover:border-primary'
+              }`}
+            >
+              Tự lấy tại tiệm
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeliveryMethod('delivery')}
+              className={`flex-1 px-4 py-3 rounded-xl border text-sm transition-colors ${
+                deliveryMethod === 'delivery'
+                  ? 'bg-primary text-white border-primary'
+                  : 'border-primary/40 text-text hover:border-primary'
+              }`}
+            >
+              Giao tận nơi
+            </button>
+          </div>
+          {deliveryMethod === 'delivery' && (
+            <p className="text-text/60 text-sm mt-2">
+              Miễn phí giao hàng trong bán kính 3km cho đơn từ 250.000đ trở lên, ngoài phạm vi này có thể phát sinh thêm phí.
+            </p>
+          )}
+        </div>
+
         {deliveryMethod === 'delivery' && (
-          <p className="text-text/60 text-sm mt-2">
-            Miễn phí giao hàng trong bán kính 3km cho đơn từ 250.000đ trở lên, ngoài phạm vi này có thể phát sinh thêm phí.
-          </p>
+          <div className="pt-2 border-t border-primary/10">
+            <label className="block text-text font-medium mb-2" htmlFor="address">
+              Địa chỉ giao hàng
+            </label>
+            <input
+              id="address"
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full rounded-xl border border-primary/40 bg-white px-4 py-3 text-text focus:outline-none focus:border-primary"
+              placeholder="Số nhà, đường, phường/xã, quận/huyện"
+            />
+          </div>
         )}
-      </div>
 
-      {deliveryMethod === 'delivery' && (
-        <div>
-          <label className="block text-text font-medium mb-2" htmlFor="address">
-            Địa chỉ giao hàng
-          </label>
-          <input
-            id="address"
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full rounded-xl border border-primary/40 bg-white/60 px-4 py-3 text-text focus:outline-none focus:border-primary"
-            placeholder="Số nhà, đường, phường/xã, quận/huyện"
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-primary/10">
+          <div>
+            <label className="block text-text font-medium mb-2" htmlFor="customerName">
+              Họ tên <span className="text-red-600">*</span>
+            </label>
+            <input
+              id="customerName"
+              type="text"
+              required
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="w-full rounded-xl border border-primary/40 bg-white px-4 py-3 text-text focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-text font-medium mb-2" htmlFor="customerPhone">
+              Số điện thoại <span className="text-red-600">*</span>
+            </label>
+            <input
+              id="customerPhone"
+              type="tel"
+              required
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              className="w-full rounded-xl border border-primary/40 bg-white px-4 py-3 text-text focus:outline-none focus:border-primary"
+            />
+          </div>
         </div>
-      )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-text font-medium mb-2" htmlFor="customerName">
-            Họ tên <span className="text-red-600">*</span>
-          </label>
-          <input
-            id="customerName"
-            type="text"
-            required
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            className="w-full rounded-xl border border-primary/40 bg-white/60 px-4 py-3 text-text focus:outline-none focus:border-primary"
-          />
-        </div>
-        <div>
-          <label className="block text-text font-medium mb-2" htmlFor="customerPhone">
-            Số điện thoại <span className="text-red-600">*</span>
-          </label>
-          <input
-            id="customerPhone"
-            type="tel"
-            required
-            value={customerPhone}
-            onChange={(e) => setCustomerPhone(e.target.value)}
-            className="w-full rounded-xl border border-primary/40 bg-white/60 px-4 py-3 text-text focus:outline-none focus:border-primary"
-          />
-        </div>
-      </div>
-
-      <div>
-        <p className="text-text font-medium mb-2">Phương thức thanh toán</p>
-        <div className="bg-primary text-white px-4 py-3 rounded-xl text-sm text-center">
-          Thanh toán khi nhận (COD)
+        <div className="pt-2 border-t border-primary/10">
+          <p className="text-text font-medium mb-2">Phương thức thanh toán</p>
+          <div className="flex gap-2">
+            <div className="flex-1 bg-primary text-white px-4 py-3 rounded-xl text-sm text-center">
+              Thanh toán khi nhận (COD)
+            </div>
+            <div
+              className="flex-1 border border-primary/20 text-text/40 px-4 py-3 rounded-xl text-sm text-center cursor-not-allowed"
+              title="Chuyển khoản QR tạm chưa hỗ trợ"
+            >
+              Chuyển khoản QR
+              <span className="block text-[10px] mt-0.5">(Sắp ra mắt)</span>
+            </div>
+          </div>
         </div>
       </div>
 
