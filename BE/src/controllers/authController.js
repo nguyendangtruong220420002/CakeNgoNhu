@@ -1,28 +1,7 @@
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Admin = require('../models/Admin');
 const asyncHandler = require('../middleware/asyncHandler');
-
-const COOKIE_NAME = 'token';
-const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 ngày
-
-function signToken(admin) {
-  return jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, {
-    expiresIn: '7d',
-  });
-}
-
-function setAuthCookie(res, token) {
-  const isProd = process.env.NODE_ENV === 'production';
-  res.cookie(COOKIE_NAME, token, {
-    httpOnly: true,
-    // FE (vercel.app) và BE nằm khác domain nên cookie phải là cross-site:
-    // 'none' bắt buộc đi kèm secure:true (browser chặn nếu không có https).
-    sameSite: isProd ? 'none' : 'lax',
-    secure: isProd,
-    maxAge: COOKIE_MAX_AGE,
-  });
-}
+const { signToken, setAuthCookie, clearAuthCookie } = require('../utils/authCookie');
 
 const login = asyncHandler(async function (req, res) {
   const { identifier, password } = req.body;
@@ -58,12 +37,7 @@ const login = asyncHandler(async function (req, res) {
 });
 
 const logout = asyncHandler(async function (req, res) {
-  const isProd = process.env.NODE_ENV === 'production';
-  res.clearCookie(COOKIE_NAME, {
-    httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
-    secure: isProd,
-  });
+  clearAuthCookie(res);
   res.status(204).send();
 });
 
