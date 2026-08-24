@@ -44,6 +44,9 @@ export default function HorizontalScroller({ children, className = '' }) {
     // Luôn reset "moved" cho tương tác mới, tránh lần vuốt trước làm chặn nhầm cú bấm nút sau đó
     drag.current.moved = false;
     if (e.target.closest('input, select, textarea, button, a, [contenteditable="true"]')) return;
+    // Ngón tay/bút cảm ứng để trình duyệt tự xử lý cuộn ngang gốc (mượt hơn, có quán tính) —
+    // chỉ tự bắt kéo bằng JS cho chuột, vì chuột không có cử chỉ vuốt-cuộn sẵn có.
+    if (e.pointerType !== 'mouse') return;
     drag.current = {
       active: true,
       startX: e.clientX,
@@ -84,7 +87,7 @@ export default function HorizontalScroller({ children, className = '' }) {
           type="button"
           onClick={() => scrollByAmount(-1)}
           aria-label="Cuộn sang trái"
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/25 backdrop-blur-sm border border-primary/30 text-primary shadow-sm flex items-center justify-center sm:hidden"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm border border-primary/40 text-primary shadow-md flex items-center justify-center sm:hidden"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -110,7 +113,7 @@ export default function HorizontalScroller({ children, className = '' }) {
           type="button"
           onClick={() => scrollByAmount(1)}
           aria-label="Cuộn sang phải"
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/25 backdrop-blur-sm border border-primary/30 text-primary shadow-sm flex items-center justify-center sm:hidden"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm border border-primary/40 text-primary shadow-md flex items-center justify-center sm:hidden"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

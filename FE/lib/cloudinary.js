@@ -34,3 +34,11 @@ export function cloudinaryThumbUrl(url, size = 128) {
   if (!url || typeof url !== 'string' || !url.includes('/upload/')) return url;
   return url.replace('/upload/', `/upload/c_fill,g_north,ar_1.28/c_fill,g_center,w_${size},h_${size}/`);
 }
+
+// Ảnh gallery chính (chi tiết sản phẩm) không cần tải nguyên bản gốc (có thể vài MB) —
+// chỉ cần đủ nét cho khung hiển thị. Giới hạn chiều rộng + nén chất lượng để tải nhanh,
+// đặc biệt quan trọng với sản phẩm có nhiều ảnh (vd "Bánh Kem Đa Dạng").
+export function cloudinaryDetailUrl(url, width = 900) {
+  if (!url || typeof url !== 'string' || !url.includes('/upload/')) return url;
+  return url.replace('/upload/', `/upload/c_limit,w_${width},q_auto,f_auto/`);
+}

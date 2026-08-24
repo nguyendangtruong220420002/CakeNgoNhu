@@ -1,6 +1,6 @@
 'use client';
 
-import { cloudinaryThumbUrl } from '@/lib/cloudinary';
+import { cloudinaryThumbUrl, cloudinaryDetailUrl } from '@/lib/cloudinary';
 import HorizontalScroller from './HorizontalScroller';
 
 export default function ImageGallery({ images, alt, activeIndex = 0, onChangeIndex }) {
@@ -12,9 +12,9 @@ export default function ImageGallery({ images, alt, activeIndex = 0, onChangeInd
         {hasImages ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={images[activeIndex]}
+            src={cloudinaryDetailUrl(images[activeIndex])}
             alt={alt}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-text/40">
@@ -30,7 +30,7 @@ export default function ImageGallery({ images, alt, activeIndex = 0, onChangeInd
               key={src + index}
               type="button"
               onClick={() => onChangeIndex?.(index)}
-              className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-colors ${
+              className={`shrink-0 w-[calc((100%-2rem)/5)] aspect-square rounded-xl overflow-hidden border-2 transition-colors ${
                 index === activeIndex ? 'border-primary' : 'border-transparent'
               }`}
             >
